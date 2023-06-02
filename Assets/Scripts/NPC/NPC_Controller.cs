@@ -19,15 +19,17 @@ namespace Brad.Character
         #region Delegates
         public delegate bool BoolCheck();
         public BoolCheck HasACurrentAction;
-        public BoolCheck IsActionComplete;
 
         public BoolCheck HasACurrentWaypoint;
-        public BoolCheck IsWaypointReached;
 
-        public BoolCheck IsAThreatInProximity;
         public BoolCheck IsAThreatInView;
 
         public BoolCheck IsFearOverMax;
+
+        public delegate int IntCheck();
+        public IntCheck GetThreatsInProxNum;
+        public IntCheck GetAlliesInProxNum;
+
         #endregion
 
         #region Events

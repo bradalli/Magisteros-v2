@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Controller : MonoBehaviour
+namespace Brad.Character
 {
-    public static Player_Controller Instance;
-
-    private void Awake()
+    public class Player_Controller : MonoBehaviour
     {
-        Instance = this;
+        public static Player_Controller Instance;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
     }
 }
+

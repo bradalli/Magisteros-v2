@@ -11,4 +11,39 @@ public class S_Spawn : BaseState
     {
         _cont = stateMachine;
     }
+
+    #region State methods
+    public override void Enter()
+    {
+        base.Enter();
+        EnableNPC(false);
+    }
+
+    public override void UpdateState()
+    {
+        if (!_cont.IsNpcOutOfRangeToPlayer())
+        {
+            EnableNPC(true);
+            _cont.ChangeState(_cont.idleState);
+        }
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+    }
+    #endregion
+
+    #region Custom methods
+    void EnableNPC(bool value)
+    {
+        foreach(MonoBehaviour comp in _cont.gameObject.GetComponents<MonoBehaviour>())
+        {
+            if(comp != _cont)
+            {
+                comp.enabled = value;
+            }
+        }
+    }
+    #endregion
 }

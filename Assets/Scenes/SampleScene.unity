@@ -329,9 +329,10 @@ GameObject:
   - component: {fileID: 707505876}
   - component: {fileID: 707505881}
   - component: {fileID: 707505880}
-  m_Layer: 0
+  - component: {fileID: 707505882}
+  m_Layer: 6
   m_Name: NPC
-  m_TagString: Untagged
+  m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -451,6 +452,27 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &707505882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707505875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f99d5bb8abd79843a75b9387cbb71f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewConeFov: 80
+  viewConeMaxDistance: 15
+  isViewToTargetClear: 0
+  targetsInView: []
+  proximityMask:
+    serializedVersion: 2
+    m_Bits: 64
+  proximityRange: 30
+  targetsInProximity: []
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,9 +570,9 @@ GameObject:
   - component: {fileID: 1088289408}
   - component: {fileID: 1088289407}
   - component: {fileID: 1088289406}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
