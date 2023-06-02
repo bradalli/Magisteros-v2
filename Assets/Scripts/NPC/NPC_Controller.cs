@@ -1,4 +1,5 @@
 using Brad.FSM;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,7 @@ namespace Brad.Character
     {
         #region Public Variables
         // Attributes
-        [SerializeField] string name = "NPC";
-        [SerializeField] float maxDistToPlayer = 50;
+        [SerializeField] string npcName = "NPC";
 
         // Events
 
@@ -18,22 +18,24 @@ namespace Brad.Character
 
         #region Delegates
         public delegate bool BoolCheck();
-        public BoolCheck HasACurrentAction;
+        public BoolCheck d_IsNpcOutOfRange;
+        public BoolCheck d_IsAThreatInView;
+        public BoolCheck d_IsFearOverMax;
 
-        public BoolCheck HasACurrentWaypoint;
+        public delegate C_Action ActionCheck();
+        public ActionCheck d_CurrentAction;
 
-        public BoolCheck IsAThreatInView;
-
-        public BoolCheck IsFearOverMax;
+        public delegate Waypoint WaypointCheck();
+        public WaypointCheck d_CurrentWaypoint;
 
         public delegate int IntCheck();
-        public IntCheck GetThreatsInProxNum;
-        public IntCheck GetAlliesInProxNum;
+        public IntCheck d_ThreatsInProxNum;
+        public IntCheck d_AlliesInProxNum;
 
         #endregion
 
         #region Events
-
+        public event Action<Vector3> E_SetNavDestination;
         #endregion
 
         #endregion
@@ -79,15 +81,27 @@ namespace Brad.Character
             combatState = new S_Combat(this);
             deadState = new S_Dead(this);
             #endregion
+            
         }
         #endregion
 
         #region Custom Methods
-        public bool IsNpcOutOfRangeToPlayer()
+
+
+        #endregion
+
+        #region Event invoke
+        public void SetNavDestination(Vector3 position)
         {
-            float distToPlayer = Vector3.Distance(transform.position, Player_Controller.Instance.transform.position);
-            return distToPlayer > maxDistToPlayer;
+            E_SetNavDestination.Invoke(position);
         }
+        #endregion
+
+        #region Delegate invoke events
+        public bool Get_IsNpcOutOfRange() => d_IsNpcOutOfRange.Invoke();
+        public int Get_ThreatsInProxNum() => d_ThreatsInProxNum.Invoke();
+        public int Get_AlliesInProxNum() => d_AlliesInProxNum.Invoke();
+        public C_Action Get_CurrAction() => d_CurrentAction.Invoke();
         #endregion
 
         #region FSM Methods
@@ -95,10 +109,6 @@ namespace Brad.Character
         {
             return spawnState;
         }
-        #endregion
-
-        #region Coroutines
-
         #endregion
 
         #region Miscellaneous

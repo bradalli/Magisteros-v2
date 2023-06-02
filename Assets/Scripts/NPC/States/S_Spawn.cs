@@ -21,7 +21,7 @@ public class S_Spawn : BaseState
 
     public override void UpdateState()
     {
-        if (!_cont.IsNpcOutOfRangeToPlayer())
+        if (!_cont.Get_IsNpcOutOfRange())
         {
             EnableNPC(true);
             _cont.ChangeState(_cont.idleState);
@@ -37,7 +37,7 @@ public class S_Spawn : BaseState
     #region Custom methods
     void EnableNPC(bool value)
     {
-        foreach(MonoBehaviour comp in _cont.gameObject.GetComponents<MonoBehaviour>())
+        foreach(Behaviour comp in _cont.gameObject.GetComponents<Behaviour>())
         {
             if(comp != _cont)
             {
