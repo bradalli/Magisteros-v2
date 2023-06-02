@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
@@ -85,14 +86,25 @@ namespace Brad.Character
         List<Collider> FindTargetsInProximity(Vector3 origin, float range, LayerMask mask)
         {
             // Finds all objects in an overlap sphere with a specific layer ("Character").
-            List<Collider> foundTargetsInProx = Physics.OverlapSphere(origin, range, mask).ToList<Collider>();
+            List<Collider> tmpFoundTargetsInProx = Physics.OverlapSphere(origin, range, mask).ToList<Collider>();
 
-            if (foundTargetsInProx.Contains(myCollider))
+            if (tmpFoundTargetsInProx.Contains(myCollider))
             {
-                foundTargetsInProx.Remove(myCollider);
+                tmpFoundTargetsInProx.Remove(myCollider);
             }
 
-            return foundTargetsInProx;
+            // Only add characters if they are unobstructed via a raycast.
+            List<Collider> tmpUnobstructedTsInProx = new List<Collider>();
+            foreach(Collider c in tmpFoundTargetsInProx)
+            {
+                Vector3 targetDir = c.transform.position - transform.position;
+                float distance = Vector3.Distance(transform.position, c.transform.position);
+                Physics.Raycast(transform.position, targetDir.normalized, out RaycastHit hit, distance);
+                if (hit.collider == c)
+                    tmpUnobstructedTsInProx.Add(c);
+            }
+
+            return tmpUnobstructedTsInProx;
         }
         List<Collider> FindTargetsInView()
         {

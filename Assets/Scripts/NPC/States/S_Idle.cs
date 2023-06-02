@@ -15,7 +15,7 @@ public class S_Idle : BaseState
     public override void Enter()
     {
         base.Enter();
-        _cont.SetNavDestination(_cont.transform.position);
+        _cont.Set_NavDestination(_cont.transform.position);
     }
 
     public override void UpdateState()
@@ -32,18 +32,21 @@ public class S_Idle : BaseState
         if(_cont.Get_ThreatsInProxNum() > 0)
         {
             _cont.ChangeState(_cont.alertState);
+            return;
         }
 
         // -> Perform
         if(_cont.Get_CurrAction() != null)
         {
             _cont.ChangeState(_cont.performState);
+            return;
         }
 
         // -> Move
-        if (_cont.d_CurrentWaypoint() != null)
+        if (_cont.Get_CurrWaypoint() != null)
         {
             _cont.ChangeState(_cont.moveState);
+            return;
         }
 
         #endregion

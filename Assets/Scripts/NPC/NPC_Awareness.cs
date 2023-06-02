@@ -22,9 +22,13 @@ namespace Brad.Character
                 npcCont.d_IsNpcOutOfRange += IsNpcOutOfRangeToPlayer;
 
                 npcCont.d_ThreatsInProxNum += FindNumberOfThreatsInProximity;
-                npcCont.d_IsAThreatInView += DoesViewContainThreat;
+                npcCont.d_ThreatsInViewNum += FindNumberOfThreatsInView;
 
                 npcCont.d_AlliesInProxNum += FindNumberOfAlliesInProximity;
+
+                npcCont.d_ThreatsInProx += ReturnThreatsInProxColliders;
+
+                npcCont.d_ClosestThreatInProx += FindClosestTargetInProximity;
             }
 
             else
@@ -65,29 +69,47 @@ namespace Brad.Character
         }
         public int FindNumberOfThreatsInProximity()
         {
-            // Finds how many "allies" are within the proximity.
+            // Finds how many "threats" are within the proximity.
             int threatNum = 0;
 
             if (targetsInProximity.Count > 0)
             {
                 foreach (Collider target in targetsInProximity)
                 {
-                    if (!target.CompareTag(this.tag))
+                    if (!target.CompareTag(transform.tag))
                         threatNum++;
                 }
             }
 
             return threatNum;
         }
-        public bool DoesViewContainThreat()
+        public int FindNumberOfThreatsInView()
         {
+            // Finds how many "threats" are within the view cone.
+
+            int threatNum = 0;
             foreach(Collider c in targetsInView)
             {
-                if (c.CompareTag(this.tag))
-                    return true;
+                if (!c.CompareTag(transform.tag))
+                    threatNum++;
             }
 
-            return false;
+            return threatNum;
+        }
+        public Collider[] ReturnThreatsInProxColliders()
+        {
+            List<Collider> tmpThreatsInProx = new List<Collider>();
+
+            if (targetsInProximity.Count > 0)
+            {
+                foreach (Collider target in targetsInProximity)
+                {
+                    if (!target.CompareTag(this.tag))
+                        tmpThreatsInProx.Add(target);
+                }
+            }
+
+            return tmpThreatsInProx.ToArray();
         }
         #endregion
     }

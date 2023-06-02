@@ -11,18 +11,14 @@ namespace Brad.Character
         #region Public Variables
         // Attributes
         [SerializeField] string npcName = "NPC";
-
-        // Events
-
-        // State information
+        public float fleeDistance = 15f;
 
         #region Delegates
         public delegate bool BoolCheck();
         public BoolCheck d_IsNpcOutOfRange;
-        public BoolCheck d_IsAThreatInView;
         public BoolCheck d_IsFearOverMax;
 
-        public delegate C_Action ActionCheck();
+        public delegate CharacterAction ActionCheck();
         public ActionCheck d_CurrentAction;
 
         public delegate Waypoint WaypointCheck();
@@ -31,11 +27,27 @@ namespace Brad.Character
         public delegate int IntCheck();
         public IntCheck d_ThreatsInProxNum;
         public IntCheck d_AlliesInProxNum;
+        public IntCheck d_ThreatsInViewNum;
+
+        public delegate float FloatCheck();
+        public FloatCheck d_RemainingNavDistance;
+
+        public delegate Collider ColliderCheck();
+        public ColliderCheck d_ClosestThreatInProx;
+
+        public delegate Collider[] ColliderArrayCheck();
+        public ColliderArrayCheck d_ThreatsInProx;
 
         #endregion
 
         #region Events
         public event Action<Vector3> E_SetNavDestination;
+        public event Action<Vector3> E_LookAtPosition;
+        public event Action<Waypoint> E_SetCurrWaypoint;
+        public event Action<string, bool> E_SetAnimBool;
+        public event Action<string> E_SetAnimTrigger;
+        public event Action E_ActionEnd;
+        public event Action<CharacterAction> E_NewAction;
         #endregion
 
         #endregion
@@ -91,17 +103,25 @@ namespace Brad.Character
         #endregion
 
         #region Event invoke
-        public void SetNavDestination(Vector3 position)
-        {
-            E_SetNavDestination.Invoke(position);
-        }
-        #endregion
+        public void Set_NavDestination(Vector3 position) => E_SetNavDestination.Invoke(position);
+        public void Set_LookAtPosition(Vector3 position) => E_LookAtPosition.Invoke(position);
+        public void Set_CurrentWaypoint(Waypoint waypoint) => E_SetCurrWaypoint.Invoke(waypoint);
+        public void Set_AnimBool(string boolName, bool value) => E_SetAnimBool.Invoke(boolName, value);
+        public void Set_AnimTrigger(string triggerName) => E_SetAnimTrigger.Invoke(triggerName);
+        public void Set_ActionEnd() => E_ActionEnd.Invoke();
+        public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
+        #endregion 
 
         #region Delegate invoke events
         public bool Get_IsNpcOutOfRange() => d_IsNpcOutOfRange.Invoke();
         public int Get_ThreatsInProxNum() => d_ThreatsInProxNum.Invoke();
         public int Get_AlliesInProxNum() => d_AlliesInProxNum.Invoke();
-        public C_Action Get_CurrAction() => d_CurrentAction.Invoke();
+        public int Get_ThreatsInViewNum() => d_ThreatsInViewNum.Invoke();
+        public CharacterAction Get_CurrAction() => d_CurrentAction.Invoke();
+        public Waypoint Get_CurrWaypoint() => d_CurrentWaypoint.Invoke();
+        public float Get_RemainingNavDistance() => d_RemainingNavDistance.Invoke();
+        public Collider Get_ClosestThreatInProx() => d_ClosestThreatInProx.Invoke();
+        public Collider[] Get_ThreatsInProx() => d_ThreatsInProx.Invoke();
         #endregion
 
         #region FSM Methods

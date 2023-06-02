@@ -11,4 +11,19 @@ public class S_Combat : BaseState
     {
         _cont = stateMachine;
     }
+
+    public override void Enter()
+    {
+        base.Enter();
+    }
+
+    public override void UpdateState()
+    {
+        _cont.Set_NavDestination(_cont.Get_ClosestThreatInProx().transform.position);
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+    }
 }
