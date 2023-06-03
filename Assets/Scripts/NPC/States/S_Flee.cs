@@ -25,7 +25,7 @@ public class S_Flee : BaseState
         averageThreatPosition /= _cont.Get_ThreatsInProxNum();
 
         // Work out target flee direction
-        Vector3 fleeDirection = (averageThreatPosition - _cont.transform.position).normalized;
+        fleeDirection = (_cont.transform.position - averageThreatPosition).normalized;
     }
 
     public override void UpdateState()
@@ -46,7 +46,7 @@ public class S_Flee : BaseState
         }
 
         // -> Combat
-        if (_cont.Get_ThreatsInViewNum() > 0)
+        if (!_cont.Get_IsFearOverMax())
         {
             _cont.ChangeState(_cont.combatState);
             return;

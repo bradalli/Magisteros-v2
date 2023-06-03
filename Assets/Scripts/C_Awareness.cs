@@ -35,7 +35,7 @@ namespace Brad.Character
             myCollider = GetComponent<CapsuleCollider>();
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             targetsInProximity = FindTargetsInProximity(transform.position, proximityRange, proximityMask);
 
@@ -97,9 +97,9 @@ namespace Brad.Character
             List<Collider> tmpUnobstructedTsInProx = new List<Collider>();
             foreach(Collider c in tmpFoundTargetsInProx)
             {
-                Vector3 targetDir = c.transform.position - transform.position;
+                Vector3 targetDir = (c.transform.position - transform.position).normalized;
                 float distance = Vector3.Distance(transform.position, c.transform.position);
-                Physics.Raycast(transform.position, targetDir.normalized, out RaycastHit hit, distance);
+                Physics.Raycast(transform.position + targetDir * 1.01f, targetDir, out RaycastHit hit, distance);
                 if (hit.collider == c)
                     tmpUnobstructedTsInProx.Add(c);
             }
@@ -122,9 +122,7 @@ namespace Brad.Character
 
                     if (angle < viewConeFov && distance < viewConeMaxDistance)
                     {
-                        Physics.Raycast(transform.position, targetDir.normalized, out RaycastHit hit, distance);
-                        if (hit.collider == c)
-                            targetsInView.Add(c);
+                        targetsInView.Add(c);
                     }
                 }
             }

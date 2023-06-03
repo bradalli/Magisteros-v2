@@ -8,6 +8,11 @@ public class S_Alert : BaseState
 {
     private NPC_Controller _cont;
     bool _damageReceived;
+
+    Collider _target;
+
+    float alertTimeLength = 5f;
+    float enterTime;
     public S_Alert(NPC_Controller stateMachine) : base("Alert", stateMachine)
     {
         _cont = stateMachine;
@@ -18,10 +23,14 @@ public class S_Alert : BaseState
         base.Enter();
         _cont.Set_AnimBool("InCombat", true);
         _cont.Set_NavDestination(_cont.transform.position);
+
+        enterTime = Time.time;
     }
 
     public override void UpdateState()
     {
+        float timePassed = Time.time - enterTime;
+
         #region Transitions
         // -> Despawn
         if (_cont.Get_IsNpcOutOfRange())
@@ -31,22 +40,31 @@ public class S_Alert : BaseState
         }
 
         // -> Idle
-        if(_cont.Get_ThreatsInProxNum() == 0)
+        if(timePassed > alertTimeLength && _cont.Get_ThreatsInProxNum() == 0)
         {
             _cont.ChangeState(_cont.idleState);
             return;
         }
 
         // -> Combat
-        Debug.Log(_cont.Get_ThreatsInViewNum());
-        if(_cont.Get_ThreatsInViewNum() > 0)
+        if(_cont.Get_ThreatsInViewNum() > 0 ^ (timePassed > alertTimeLength && _cont.Get_ThreatsInProxNum() > 0))
         {
             _cont.ChangeState(_cont.combatState);
             return;
         }
         #endregion
 
-        _cont.Set_LookAtPosition(_cont.Get_ClosestThreatInProx().transform.position);
+        // Change target if closest threat has changed.
+        if (_cont.Get_ClosestThreatInView() != null)
+        {
+            if (_cont.Get_ClosestThreatInView() != _target)
+                _target = _cont.Get_ClosestThreatInView();
+        }
+
+        if (_target != null)
+        {
+            _cont.Set_LookAtPosition(_target.transform.position);
+        }
     }
 
     public override void Exit()

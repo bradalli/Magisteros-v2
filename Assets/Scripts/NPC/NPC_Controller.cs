@@ -13,6 +13,10 @@ namespace Brad.Character
         [SerializeField] string npcName = "NPC";
         public float fleeDistance = 15f;
 
+        // Stats
+        public int maxHealthValue = 100;
+        public int currHealthValue = 100;
+
         #region Delegates
         public delegate bool BoolCheck();
         public BoolCheck d_IsNpcOutOfRange;
@@ -34,9 +38,11 @@ namespace Brad.Character
 
         public delegate Collider ColliderCheck();
         public ColliderCheck d_ClosestThreatInProx;
+        public ColliderCheck d_ClosestThreatInView;
 
         public delegate Collider[] ColliderArrayCheck();
         public ColliderArrayCheck d_ThreatsInProx;
+        public ColliderArrayCheck d_ThreatsInView;
 
         #endregion
 
@@ -112,8 +118,9 @@ namespace Brad.Character
         public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
         #endregion 
 
-        #region Delegate invoke events
+        #region Delegate invoke
         public bool Get_IsNpcOutOfRange() => d_IsNpcOutOfRange.Invoke();
+        public bool Get_IsFearOverMax() => d_IsFearOverMax.Invoke();
         public int Get_ThreatsInProxNum() => d_ThreatsInProxNum.Invoke();
         public int Get_AlliesInProxNum() => d_AlliesInProxNum.Invoke();
         public int Get_ThreatsInViewNum() => d_ThreatsInViewNum.Invoke();
@@ -121,7 +128,9 @@ namespace Brad.Character
         public Waypoint Get_CurrWaypoint() => d_CurrentWaypoint.Invoke();
         public float Get_RemainingNavDistance() => d_RemainingNavDistance.Invoke();
         public Collider Get_ClosestThreatInProx() => d_ClosestThreatInProx.Invoke();
+        public Collider Get_ClosestThreatInView() => d_ClosestThreatInView.Invoke();
         public Collider[] Get_ThreatsInProx() => d_ThreatsInProx.Invoke();
+        public Collider[] Get_ThreatsInView() => d_ThreatsInView.Invoke();
         #endregion
 
         #region FSM Methods

@@ -39,16 +39,8 @@ public class C_Move : MonoBehaviour
 
     void Look()
     {
-        if (lookAtPosition != Vector3.zero)
-            targetLookDir = new Vector3(lookAtPosition.x, transform.position.y, lookAtPosition.z) - transform.position;
-
-        else if (navAgent.hasPath)
-            targetLookDir = new Vector3(navAgent.nextPosition.x, transform.position.y, navAgent.nextPosition.z)
-                - transform.position;
-
-        else
-            targetLookDir = new Vector3(Vector3.forward.x, transform.position.y, Vector3.forward.z);
-
+        if (navAgent.velocity.normalized.magnitude > 0)
+            targetLookDir = navAgent.velocity.normalized;
 
         targetLookDir = new Vector3(targetLookDir.x, 0, targetLookDir.z);
         transform.rotation = Quaternion.LookRotation(targetLookDir, transform.up);
