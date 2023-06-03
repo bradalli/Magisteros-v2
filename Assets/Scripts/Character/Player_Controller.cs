@@ -8,8 +8,8 @@ namespace Brad.Character
     {
         public static Player_Controller Instance;
 
-        int maxHealth = 100;
-        int health;
+        [SerializeField] int maxHealth = 100;
+        [SerializeField] int health;
 
         #region interface instance properties
         public int MaxHealth

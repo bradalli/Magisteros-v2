@@ -59,7 +59,7 @@ public class S_Perform : BaseState
 
         if(_action.actionState == CharacterAction.state.Complete)
         {
-            _cont.Set_ActionEnd();
+            _cont.Do_ActionEnd();
         }
     }
 

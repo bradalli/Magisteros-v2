@@ -76,6 +76,7 @@ namespace Brad.Character
         public event Action E_ActionEnd;
         public event Action<CharacterAction> E_NewAction;
         public event Action<string> E_ResetTrigger;
+        public event Action E_AttackSwing;
         #endregion
 
         #endregion
@@ -139,9 +140,10 @@ namespace Brad.Character
         public void Set_CurrentWaypoint(Waypoint waypoint) => E_SetCurrWaypoint.Invoke(waypoint);
         public void Set_AnimBool(string boolName, bool value) => E_SetAnimBool.Invoke(boolName, value);
         public void Set_AnimTrigger(string triggerName) => E_SetAnimTrigger.Invoke(triggerName);
-        public void Set_ActionEnd() => E_ActionEnd.Invoke();
+        public void Do_ActionEnd() => E_ActionEnd.Invoke();
         public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
         public void Set_ResetTrigger(string name) => E_ResetTrigger.Invoke(name);
+        public void Do_AttackSwing() => E_AttackSwing.Invoke();
         #endregion 
 
         #region Delegate invoke
