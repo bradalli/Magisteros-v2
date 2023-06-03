@@ -97,11 +97,7 @@ namespace Brad.Character
             List<Collider> tmpUnobstructedTsInProx = new List<Collider>();
             foreach(Collider c in tmpFoundTargetsInProx)
             {
-                Vector3 targetDir = (c.transform.position - transform.position).normalized;
-                float distance = Vector3.Distance(transform.position, c.transform.position);
-                Physics.Raycast(transform.position + targetDir * 1.01f, targetDir, out RaycastHit hit, distance);
-                if (hit.collider == c)
-                    tmpUnobstructedTsInProx.Add(c);
+                tmpUnobstructedTsInProx.Add(c);
             }
 
             return tmpUnobstructedTsInProx;
@@ -116,13 +112,15 @@ namespace Brad.Character
             {
                 foreach (Collider c in targetsInProximity)
                 {
-                    Vector3 targetDir = c.transform.position - transform.position;
+                    Vector3 targetDir = (c.transform.position - transform.position).normalized;
                     float angle = Vector3.Angle(targetDir, transform.forward);
                     float distance = Vector3.Distance(transform.position, c.transform.position);
 
                     if (angle < viewConeFov && distance < viewConeMaxDistance)
                     {
-                        targetsInView.Add(c);
+                        Physics.Raycast(transform.position + targetDir * .51f, targetDir, out RaycastHit hit, distance);
+                        if (hit.collider == c)
+                            targetsInView.Add(c);
                     }
                 }
             }

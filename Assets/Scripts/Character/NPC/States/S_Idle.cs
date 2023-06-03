@@ -33,7 +33,7 @@ public class S_Idle : BaseState
         {
             _cont.ChangeState(_cont.alertState);
             return;
-        }
+        } // Need to add function for other allies in proximity to warn this npc.
 
         // -> Perform
         if(_cont.Get_CurrAction() != null)

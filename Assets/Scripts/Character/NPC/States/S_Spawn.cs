@@ -24,13 +24,20 @@ public class S_Spawn : BaseState
         if (!_cont.Get_IsNpcOutOfRange())
         {
             EnableNPC(true);
+            _cont.TryGetComponent<IDamagable>(out IDamagable _contDmg);
+            if (_contDmg != null)
+            {
+                _contDmg.MaxHealth = _cont.maxHealth;
+                _contDmg.Health = _cont.MaxHealth;
+            }
             _cont.ChangeState(_cont.idleState);
         }
     }
 
     public override void Exit()
     {
-        base.Exit();
+        
+        base.Exit();  
     }
     #endregion
 

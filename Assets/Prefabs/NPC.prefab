@@ -68,7 +68,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 0
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -90,6 +90,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcName: NPC
   fleeDistance: 30
+  maxHealth: 100
+  health: 0
 --- !u!114 &770270271356491070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,6 +112,7 @@ MonoBehaviour:
     m_Bits: 64
   proximityRange: 25
   targetsInProximity: []
+  maxFearLevel: 1
   maxDistToPlayer: 50
 --- !u!114 &6120972396642868539
 MonoBehaviour:
@@ -159,6 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47653ac2168deb4489fc2cd5ca27603e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookSpeed: 5
   currentWaypoint: {fileID: 0}
 --- !u!1001 &6420568092594281253
 PrefabInstance:

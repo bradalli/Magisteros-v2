@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Brad.Character
 {
-    public class NPC_Controller : StateMachine
+    public class NPC_Controller : StateMachine, IDamagable
     {
         #region Public Variables
         // Attributes
@@ -14,13 +14,31 @@ namespace Brad.Character
         public float fleeDistance = 15f;
 
         // Stats
-        public int maxHealthValue = 100;
-        public int currHealthValue = 100;
+        public int maxHealth = 100;
+        public int health;
+
+        #region Interface instance properties
+        public int MaxHealth
+        {
+            get { return maxHealth; }
+            set { maxHealth = value; }
+        }
+        public int Health
+        {
+            get { return health; }
+            set { health = value; }
+        }
+        #endregion
 
         #region Delegates
         public delegate bool BoolCheck();
         public BoolCheck d_IsNpcOutOfRange;
         public BoolCheck d_IsFearOverMax;
+
+        public delegate bool AnimatorCheck(string name, int layer);
+        public AnimatorCheck d_IsCurrAnimStateThis;
+        public AnimatorCheck d_IsCurrAnimTransToThis;
+        public AnimatorCheck d_IsCurrAnimTransFromThis;
 
         public delegate CharacterAction ActionCheck();
         public ActionCheck d_CurrentAction;
@@ -35,6 +53,9 @@ namespace Brad.Character
 
         public delegate float FloatCheck();
         public FloatCheck d_RemainingNavDistance;
+
+        public delegate Vector3 Vector3Check();
+        public Vector3Check d_NavVelocity;
 
         public delegate Collider ColliderCheck();
         public ColliderCheck d_ClosestThreatInProx;
@@ -54,6 +75,7 @@ namespace Brad.Character
         public event Action<string> E_SetAnimTrigger;
         public event Action E_ActionEnd;
         public event Action<CharacterAction> E_NewAction;
+        public event Action<string> E_ResetTrigger;
         #endregion
 
         #endregion
@@ -71,6 +93,8 @@ namespace Brad.Character
         public S_Move moveState;
         [HideInInspector]
         public S_Alert alertState;
+        [HideInInspector]
+        public S_Search searchState;
         [HideInInspector]
         public S_Flee fleeState;
         [HideInInspector]
@@ -95,6 +119,7 @@ namespace Brad.Character
             performState = new S_Perform(this);
             moveState = new S_Move(this);
             alertState = new S_Alert(this);
+            searchState = new S_Search(this);
             fleeState = new S_Flee(this);
             combatState = new S_Combat(this);
             deadState = new S_Dead(this);
@@ -116,17 +141,22 @@ namespace Brad.Character
         public void Set_AnimTrigger(string triggerName) => E_SetAnimTrigger.Invoke(triggerName);
         public void Set_ActionEnd() => E_ActionEnd.Invoke();
         public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
+        public void Set_ResetTrigger(string name) => E_ResetTrigger.Invoke(name);
         #endregion 
 
         #region Delegate invoke
         public bool Get_IsNpcOutOfRange() => d_IsNpcOutOfRange.Invoke();
         public bool Get_IsFearOverMax() => d_IsFearOverMax.Invoke();
+        public bool Get_IsCurrAnimStateThis(string name, int layer) => d_IsCurrAnimStateThis.Invoke(name, layer);
+        public bool Get_IsCurrAnimTransToThis(string name, int layer) => d_IsCurrAnimTransToThis.Invoke(name, layer);
+        public bool Get_IsCurrAnimTransFromThis(string name, int layer) => d_IsCurrAnimTransToThis.Invoke(name, layer);
         public int Get_ThreatsInProxNum() => d_ThreatsInProxNum.Invoke();
         public int Get_AlliesInProxNum() => d_AlliesInProxNum.Invoke();
         public int Get_ThreatsInViewNum() => d_ThreatsInViewNum.Invoke();
         public CharacterAction Get_CurrAction() => d_CurrentAction.Invoke();
         public Waypoint Get_CurrWaypoint() => d_CurrentWaypoint.Invoke();
         public float Get_RemainingNavDistance() => d_RemainingNavDistance.Invoke();
+        public Vector3 Get_NavVelocity() => d_NavVelocity.Invoke();
         public Collider Get_ClosestThreatInProx() => d_ClosestThreatInProx.Invoke();
         public Collider Get_ClosestThreatInView() => d_ClosestThreatInView.Invoke();
         public Collider[] Get_ThreatsInProx() => d_ThreatsInProx.Invoke();

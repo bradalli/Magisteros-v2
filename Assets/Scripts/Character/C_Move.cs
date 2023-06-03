@@ -26,6 +26,8 @@ public class C_Move : MonoBehaviour
             if (navAgent != null)
             {
                 npcCont.d_RemainingNavDistance += ReturnRemainingNavDistance;
+                npcCont.d_NavVelocity += ReturnVelocity;
+
                 npcCont.E_SetNavDestination += SetAgentDestination;
                 npcCont.E_LookAtPosition += SetLookAtPosition;
             }
@@ -64,5 +66,10 @@ public class C_Move : MonoBehaviour
     public Waypoint ReturnCurrentWaypoint()
     {
         return currentWaypoint;
+    }
+
+    public Vector3 ReturnVelocity()
+    {
+        return navAgent.velocity;
     }
 }

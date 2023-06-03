@@ -7,7 +7,7 @@ namespace Brad.FSM
 {
     public class StateMachine : MonoBehaviour
     {
-        BaseState currentState;
+        public BaseState currentState;
 
         void Start()
         {
