@@ -94,7 +94,7 @@ public class S_Combat : BaseState
                     if((Time.time - lastAttackTime) > _attackDelay && !attacking)
                     {
                         _cont.Set_AnimTrigger("tAttack");
-                        Debug.Log($"LAT({lastAttackTime}s)... CAT({Time.time}s)... Diff({Time.time - lastAttackTime}s)... Delay({_attackDelay}s)");
+                        //Debug.Log($"LAT({lastAttackTime}s)... CAT({Time.time}s)... Diff({Time.time - lastAttackTime}s)... Delay({_attackDelay}s)");
                         lastAttackTime = Time.time;
                         attacking = true;
                         return;
@@ -113,9 +113,9 @@ public class S_Combat : BaseState
 
     public override void Exit()
     {
-        base.Exit();
         _cont.Set_NavDestination(_cont.transform.position);
         _cont.Set_LookAtPosition(_cont.transform.forward);
+        base.Exit();
     }
 
     public Collider ReturnTarget()

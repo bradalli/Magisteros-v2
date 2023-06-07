@@ -16,14 +16,15 @@ public class S_Spawn : BaseState
     public override void Enter()
     {
         base.Enter();
-        EnableNPC(false);
+        _cont.EnableNPC(false);
+        _cont.Set_AnimTrigger("tRespawn");
     }
 
     public override void UpdateState()
     {
         if (!_cont.Get_IsNpcOutOfRange())
         {
-            EnableNPC(true);
+            _cont.EnableNPC(true);
             _cont.TryGetComponent<IDamagable>(out IDamagable _contDmg);
             if (_contDmg != null)
             {
@@ -38,19 +39,6 @@ public class S_Spawn : BaseState
     {
         
         base.Exit();  
-    }
-    #endregion
-
-    #region Custom methods
-    void EnableNPC(bool value)
-    {
-        foreach(Behaviour comp in _cont.gameObject.GetComponents<Behaviour>())
-        {
-            if(comp != _cont)
-            {
-                comp.enabled = value;
-            }
-        }
     }
     #endregion
 }

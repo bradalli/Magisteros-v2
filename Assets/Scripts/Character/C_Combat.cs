@@ -7,21 +7,21 @@ using UnityEngine;
 public class C_Combat : MonoBehaviour
 {
     int damage = 5;
-    NPC_Controller npcCont;
+    C_Controller cont;
 
     private void OnEnable()
     {
-        TryGetComponent(out npcCont);
+        TryGetComponent(out cont);
 
-        if (npcCont != null)
+        if (cont != null)
         {
-            npcCont.E_AttackSwing += AttackCast;
+            cont.E_AttackSwing += AttackCast;
         }
     }
 
     void AttackCast()
     {
-        List<Collider> hitColliders = Physics.OverlapSphere(transform.position + (transform.forward.normalized * 1.5f), 1).ToList<Collider>();
+        List<Collider> hitColliders = Physics.OverlapSphere(transform.position + (cont.meshT.forward.normalized * 1.5f), 1).ToList<Collider>();
         TryGetComponent<Collider>(out Collider myCol);
         if (hitColliders.Contains(myCol))
             hitColliders.Remove(myCol);
@@ -36,7 +36,10 @@ public class C_Combat : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position + (transform.forward.normalized * 1.5f), 1);
+        if (cont)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position + (cont.meshT.forward.normalized * 1.5f), 1);
+        }
     }
 }

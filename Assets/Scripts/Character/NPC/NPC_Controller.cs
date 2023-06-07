@@ -6,11 +6,10 @@ using UnityEngine;
 
 namespace Brad.Character
 {
-    public class NPC_Controller : StateMachine, IDamagable
+    public class NPC_Controller : C_Controller, IDamagable
     {
         #region Public Variables
         // Attributes
-        [SerializeField] string npcName = "NPC";
         public float fleeDistance = 15f;
 
         // Stats
@@ -34,6 +33,7 @@ namespace Brad.Character
         public delegate bool BoolCheck();
         public BoolCheck d_IsNpcOutOfRange;
         public BoolCheck d_IsFearOverMax;
+        public BoolCheck d_NavReachedDestination;
 
         public delegate bool AnimatorCheck(string name, int layer);
         public AnimatorCheck d_IsCurrAnimStateThis;
@@ -56,6 +56,7 @@ namespace Brad.Character
 
         public delegate Vector3 Vector3Check();
         public Vector3Check d_NavVelocity;
+        public Vector3Check d_NavSamplePosition;
 
         public delegate Collider ColliderCheck();
         public ColliderCheck d_ClosestThreatInProx;
@@ -76,7 +77,6 @@ namespace Brad.Character
         public event Action E_ActionEnd;
         public event Action<CharacterAction> E_NewAction;
         public event Action<string> E_ResetTrigger;
-        public event Action E_AttackSwing;
         #endregion
 
         #endregion
@@ -111,7 +111,7 @@ namespace Brad.Character
         #endregion
 
         #region MonoBehaviour
-        private void Awake()
+        private void OnEnable()
         {
             #region State initialisation
             spawnState = new S_Spawn(this);
@@ -125,12 +125,21 @@ namespace Brad.Character
             combatState = new S_Combat(this);
             deadState = new S_Dead(this);
             #endregion
-            
         }
         #endregion
 
         #region Custom Methods
 
+        public void EnableNPC(bool value)
+        {
+            foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
+            {
+                if (comp != this)
+                {
+                    comp.enabled = value;
+                }
+            }
+        }
 
         #endregion
 
@@ -143,7 +152,6 @@ namespace Brad.Character
         public void Do_ActionEnd() => E_ActionEnd.Invoke();
         public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
         public void Set_ResetTrigger(string name) => E_ResetTrigger.Invoke(name);
-        public void Do_AttackSwing() => E_AttackSwing.Invoke();
         #endregion 
 
         #region Delegate invoke
@@ -152,6 +160,7 @@ namespace Brad.Character
         public bool Get_IsCurrAnimStateThis(string name, int layer) => d_IsCurrAnimStateThis.Invoke(name, layer);
         public bool Get_IsCurrAnimTransToThis(string name, int layer) => d_IsCurrAnimTransToThis.Invoke(name, layer);
         public bool Get_IsCurrAnimTransFromThis(string name, int layer) => d_IsCurrAnimTransToThis.Invoke(name, layer);
+        public bool Get_NavReachedDestination() => d_NavReachedDestination.Invoke();
         public int Get_ThreatsInProxNum() => d_ThreatsInProxNum.Invoke();
         public int Get_AlliesInProxNum() => d_AlliesInProxNum.Invoke();
         public int Get_ThreatsInViewNum() => d_ThreatsInViewNum.Invoke();

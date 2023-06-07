@@ -12,8 +12,8 @@ public class C_Move : MonoBehaviour
     private NavMeshAgent navAgent;
     public Waypoint currentWaypoint;
 
-    private Vector3 targetLookDir, currLookDir;
-    private Vector3 lookAtPosition;
+    private Vector3 targetLookDir = Vector3.forward;
+    public Vector3 lookAtPosition;
 
     private void OnEnable()
     {
@@ -27,6 +27,7 @@ public class C_Move : MonoBehaviour
             {
                 npcCont.d_RemainingNavDistance += ReturnRemainingNavDistance;
                 npcCont.d_NavVelocity += ReturnVelocity;
+                npcCont.d_NavReachedDestination += ReturnReachedDestination;
 
                 npcCont.E_SetNavDestination += SetAgentDestination;
                 npcCont.E_LookAtPosition += SetLookAtPosition;
@@ -41,11 +42,16 @@ public class C_Move : MonoBehaviour
 
     void Look()
     {
-        if (navAgent.velocity.normalized.magnitude > 0)
-            targetLookDir = navAgent.velocity.normalized;
+        if (lookAtPosition == Vector3.zero && navAgent.velocity.normalized.magnitude > 0)
+            targetLookDir = Vector3.RotateTowards(npcCont.meshT.forward, navAgent.velocity.normalized, lookSpeed * Time.deltaTime, 0);
 
+        if(lookAtPosition != Vector3.zero)
+            targetLookDir = Vector3.RotateTowards(npcCont.meshT.forward, lookAtPosition, lookSpeed * Time.deltaTime, 1);
+
+        // Ensure targetLookDir.y is 0
         targetLookDir = new Vector3(targetLookDir.x, 0, targetLookDir.z);
-        transform.rotation = Quaternion.LookRotation(targetLookDir, transform.up);
+        
+        npcCont.meshT.rotation = Quaternion.LookRotation(targetLookDir, npcCont.meshT.up);
     }
 
     public void SetLookAtPosition(Vector3 position)
@@ -71,5 +77,10 @@ public class C_Move : MonoBehaviour
     public Vector3 ReturnVelocity()
     {
         return navAgent.velocity;
+    }
+
+    public bool ReturnReachedDestination()
+    {
+        return navAgent.remainingDistance <= navAgent.stoppingDistance;
     }
 }

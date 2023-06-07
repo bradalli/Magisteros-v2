@@ -25,14 +25,15 @@ namespace Brad.Character
 
         #region Private variables
         Collider myCollider;
-
+        C_Controller cont;
         #endregion
 
         #region Monobehaviour
 
         private void Awake()
         {
-            myCollider = GetComponent<CapsuleCollider>();
+            TryGetComponent(out myCollider);
+            TryGetComponent(out cont);
         }
 
         private void Update()
@@ -66,8 +67,8 @@ namespace Brad.Character
                 float rayRange = viewConeMaxDistance;
                 Quaternion leftRayRotation = Quaternion.AngleAxis(-totalFOV, Vector3.up);
                 Quaternion rightRayRotation = Quaternion.AngleAxis(totalFOV, Vector3.up);
-                Vector3 leftRayDirection = leftRayRotation * transform.forward;
-                Vector3 rightRayDirection = rightRayRotation * transform.forward;
+                Vector3 leftRayDirection = leftRayRotation * cont.meshT.forward;
+                Vector3 rightRayDirection = rightRayRotation * cont.meshT.forward;
                 Gizmos.DrawRay(transform.position, leftRayDirection * rayRange);
                 Gizmos.DrawRay(transform.position, rightRayDirection * rayRange);
                 Handles.color = Color.yellow;
@@ -113,7 +114,7 @@ namespace Brad.Character
                 foreach (Collider c in targetsInProximity)
                 {
                     Vector3 targetDir = (c.transform.position - transform.position).normalized;
-                    float angle = Vector3.Angle(targetDir, transform.forward);
+                    float angle = Vector3.Angle(targetDir, cont.meshT.forward);
                     float distance = Vector3.Distance(transform.position, c.transform.position);
 
                     if (angle < viewConeFov && distance < viewConeMaxDistance)

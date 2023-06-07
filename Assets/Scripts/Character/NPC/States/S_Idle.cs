@@ -16,6 +16,7 @@ public class S_Idle : BaseState
     {
         base.Enter();
         _cont.Set_NavDestination(_cont.transform.position);
+        _cont.Set_LookAtPosition(Vector3.zero);
     }
 
     public override void UpdateState()

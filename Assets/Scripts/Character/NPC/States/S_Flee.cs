@@ -17,15 +17,10 @@ public class S_Flee : BaseState
     {
         base.Enter();
         // Work out the average position of all the threats in proximity
-        Vector3 averageThreatPosition = Vector3.zero;
-        foreach(Collider col in _cont.Get_ThreatsInProx())
-        {
-            averageThreatPosition += col.transform.position;
-        }
-        averageThreatPosition /= _cont.Get_ThreatsInProxNum();
+        
 
         // Work out target flee direction
-        fleeDirection = (_cont.transform.position - averageThreatPosition).normalized;
+        fleeDirection = (_cont.transform.position - AverageThreatPosition()).normalized;
     }
 
     public override void UpdateState()
@@ -52,6 +47,7 @@ public class S_Flee : BaseState
             return;
         }
         #endregion
+        fleeDirection = (_cont.transform.position - AverageThreatPosition()).normalized;
         Vector3 fleePosition = _cont.transform.position + (fleeDirection * _cont.fleeDistance);
         _cont.Set_NavDestination(fleePosition);
     }
@@ -59,6 +55,18 @@ public class S_Flee : BaseState
     public override void Exit()
     {
         base.Exit();
+    }
+
+    Vector3 AverageThreatPosition()
+    {
+        Vector3 averageThreatPosition = Vector3.zero;
+        foreach (Collider col in _cont.Get_ThreatsInProx())
+        {
+            averageThreatPosition += col.transform.position;
+        }
+        averageThreatPosition /= _cont.Get_ThreatsInProxNum();
+
+        return averageThreatPosition;
     }
 }
 

@@ -3,13 +3,20 @@ using Brad.FSM;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class S_Search : BaseState
 {
     private NPC_Controller _cont;
 
-    float searchTimeLength = 2f;
+    Vector3 startPosition;
+    float searchTimeLength = 20f;
     float enterTime;
+
+    float searchRange = 20f;
+    Vector3 searchPosition;
+
+    int sampleAttempts = 0;
 
     public S_Search(NPC_Controller stateMachine) : base("Search", stateMachine)
     {
@@ -20,6 +27,11 @@ public class S_Search : BaseState
     {
         base.Enter();
         enterTime = Time.time;
+        startPosition = _cont.transform.position;
+
+        // Find a random position within the searchRange and sample it from the nav mesh.
+        Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
+        SetNavPosition(randomPosition);
     }
 
     public override void UpdateState()
@@ -48,10 +60,45 @@ public class S_Search : BaseState
             return;
         }
         #endregion
+
+        //Debug.Log(_cont.Get_RemainingNavDistance());
+
+        if(_cont.Get_NavReachedDestination())
+        {
+            // Find a random position within the searchRange and sample it from the nav mesh.
+            Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
+            SetNavPosition(randomPosition);
+        }
     }
 
     public override void Exit()
     {
         base.Exit();
+        SetNavPosition(startPosition);
+    }
+
+    void SetNavPosition(Vector3 desiredPosition)
+    {
+        /*
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(desiredPosition, out hit, 10f, NavMesh.AllAreas))
+        {
+            searchPosition = hit.position;
+            _cont.Set_NavDestination(searchPosition);
+            sampleAttempts = 0;
+        }
+
+        else
+        {
+            Debug.LogError("Navmesh not found in sample attempt");
+            sampleAttempts++;
+
+            if (sampleAttempts < 100)
+                SetNavPosition(desiredPosition);
+
+            else
+                Debug.LogError("NavMesh sample attempts limit reached");
+        }*/
+        _cont.Set_NavDestination(desiredPosition);
     }
 }

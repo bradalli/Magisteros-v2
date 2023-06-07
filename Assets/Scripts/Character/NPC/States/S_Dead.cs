@@ -11,5 +11,12 @@ public class S_Dead : BaseState
     {
         _cont = stateMachine;
     }
+
+    public override void Enter()
+    {
+        base.Enter();
+        _cont.Set_AnimTrigger("tDie");
+        _cont.EnableNPC(false);
+    }
 }
 

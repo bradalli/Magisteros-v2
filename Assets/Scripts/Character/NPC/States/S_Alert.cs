@@ -11,8 +11,16 @@ public class S_Alert : BaseState
 
     Collider _target;
 
-    float alertTimeLength = 2f;
+    Vector3 lastLookDirection;
+    Vector3 lookDirection = Vector3.forward;
+
+    int lookAroundNum = 3;
+    
+    float alertTimeLength = 5f;
     float enterTime;
+
+    float lookAtPosLength;
+    float lastLookTime;
     public S_Alert(NPC_Controller stateMachine) : base("Alert", stateMachine)
     {
         _cont = stateMachine;
@@ -20,16 +28,24 @@ public class S_Alert : BaseState
 
     public override void Enter()
     {
-        base.Enter();
         _cont.Set_AnimBool("InCombat", true);
         _cont.Set_NavDestination(_cont.transform.position);
 
+        lookAtPosLength = alertTimeLength / lookAroundNum;
+
+        lastLookDirection = lookDirection;
         enterTime = Time.time;
+        lastLookTime = Time.time - lookAtPosLength;
+
+        _target = _cont.Get_ClosestThreatInProx();
+
+        base.Enter();
     }
 
     public override void UpdateState()
     {
-        float timePassed = Time.time - enterTime;
+        float timePassedAlert = Time.time - enterTime;
+        float timePassedLook = Time.time - lastLookTime;
 
         #region Transitions
         // -> Despawn
@@ -40,7 +56,7 @@ public class S_Alert : BaseState
         }
 
         // -> Idle
-        if(timePassed > alertTimeLength && _cont.Get_ThreatsInProxNum() == 0)
+        if(timePassedAlert > alertTimeLength && _cont.Get_ThreatsInProxNum() == 0)
         {
             _cont.ChangeState(_cont.idleState);
             return;
@@ -54,7 +70,7 @@ public class S_Alert : BaseState
         }
 
         // -> Search
-        if(timePassed > alertTimeLength && _cont.Get_ThreatsInProxNum() > 0)
+        if(timePassedAlert > alertTimeLength && _cont.Get_ThreatsInProxNum() > 0)
         {
             _cont.ChangeState(_cont.searchState);
             return;
@@ -70,13 +86,30 @@ public class S_Alert : BaseState
 
         if (_target != null)
         {
-            _cont.Set_LookAtPosition(_target.transform.position);
+            // Every time lookAtPosLength has elapsed, pick a new direction to look
+            if(timePassedLook > lookAtPosLength)
+            {
+                // Set the lookDirection to a random direction
+                lookDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1, 1));
+
+                // If new direction is too similar to the last one, look in the opposite direction.
+                if (Vector3.Distance(lastLookDirection, lookDirection) < 0.5f)
+                    lookDirection *= -1;
+
+                lookDirection += _cont.meshT.position;
+                lastLookTime = Time.time;
+            }
+                
+
+            if(lookDirection != lastLookDirection)
+                _cont.Set_LookAtPosition(lookDirection);
         }
     }
 
     public override void Exit()
     {
-        base.Exit();
         _cont.Set_AnimBool("InCombat", false);
+        _cont.Set_LookAtPosition(Vector3.zero);
+        base.Exit();
     }
 }

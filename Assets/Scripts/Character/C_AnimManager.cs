@@ -27,7 +27,8 @@ public class C_AnimManager : MonoBehaviour
 
     private void Update()
     {
-        anim.SetFloat("Forward", npcCont.Get_NavVelocity().magnitude);
+        if(npcCont)
+            anim.SetFloat("Forward", npcCont.Get_NavVelocity().magnitude);
     }
 
     bool ReturnIsCurrentStateThis(string name, int layer)

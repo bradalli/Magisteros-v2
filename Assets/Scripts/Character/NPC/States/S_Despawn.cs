@@ -16,7 +16,7 @@ public class S_Despawn : BaseState
     public override void Enter()
     {
         base.Enter();
-        EnableNPC(false);
+        _cont.EnableNPC(false);
     }
 
     public override void UpdateState()
@@ -27,19 +27,6 @@ public class S_Despawn : BaseState
     public override void Exit()
     {
         base.Exit();
-    }
-    #endregion
-
-    #region Custom methods
-    void EnableNPC(bool value)
-    {
-        foreach (MonoBehaviour comp in _cont.gameObject.GetComponents<MonoBehaviour>())
-        {
-            if (comp != _cont)
-            {
-                comp.enabled = value;
-            }
-        }
     }
     #endregion
 }
