@@ -6,16 +6,20 @@ using UnityEngine;
 
 namespace Brad.Character
 {
-    public class NPC_Controller : C_Controller, IDamagable
+    public class NPC_Controller : StateMachine, IDataManager, IDamagable
     {
         #region Public Variables
+        // Data handler
+        public Dictionary<string, object> data;
+
         // Attributes
-        public float fleeDistance = 15f;
+        public float fleeDistance = 15f; // NPC
 
         // Stats
-        public int maxHealth = 100;
-        public int health;
+        public int maxHealth = 100; // Both
+        public int health; // Both
 
+        // Both
         #region Interface instance properties
         public int MaxHealth
         {
@@ -27,60 +31,23 @@ namespace Brad.Character
             get { return health; }
             set { health = value; }
         }
-        #endregion
-
-        #region Delegates
-        public delegate bool BoolCheck();
-        public BoolCheck d_IsNpcOutOfRange;
-        public BoolCheck d_IsFearOverMax;
-        public BoolCheck d_NavReachedDestination;
-
-        public delegate bool AnimatorCheck(string name, int layer);
-        public AnimatorCheck d_IsCurrAnimStateThis;
-        public AnimatorCheck d_IsCurrAnimTransToThis;
-        public AnimatorCheck d_IsCurrAnimTransFromThis;
-
-        public delegate CharacterAction ActionCheck();
-        public ActionCheck d_CurrentAction;
-
-        public delegate Waypoint WaypointCheck();
-        public WaypointCheck d_CurrentWaypoint;
-
-        public delegate int IntCheck();
-        public IntCheck d_ThreatsInProxNum;
-        public IntCheck d_AlliesInProxNum;
-        public IntCheck d_ThreatsInViewNum;
-
-        public delegate float FloatCheck();
-        public FloatCheck d_RemainingNavDistance;
-
-        public delegate Vector3 Vector3Check();
-        public Vector3Check d_NavVelocity;
-        public Vector3Check d_NavSamplePosition;
-
-        public delegate Collider ColliderCheck();
-        public ColliderCheck d_ClosestThreatInProx;
-        public ColliderCheck d_ClosestThreatInView;
-
-        public delegate Collider[] ColliderArrayCheck();
-        public ColliderArrayCheck d_ThreatsInProx;
-        public ColliderArrayCheck d_ThreatsInView;
-
+        public Dictionary<string, object> dataDictionary { get => data; }
         #endregion
 
         #region Events
-        public event Action<Vector3> E_SetNavDestination;
-        public event Action<Vector3> E_LookAtPosition;
-        public event Action<Waypoint> E_SetCurrWaypoint;
-        public event Action<string, bool> E_SetAnimBool;
-        public event Action<string> E_SetAnimTrigger;
-        public event Action E_ActionEnd;
-        public event Action<CharacterAction> E_NewAction;
-        public event Action<string> E_ResetTrigger;
+        public event Action<Vector3> E_SetNavDestination; // Both
+        public event Action<Vector3> E_LookAtPosition; // NPC
+        public event Action<Waypoint> E_SetCurrWaypoint; // NPC
+        public event Action<string, bool> E_SetAnimBool; // Both
+        public event Action<string> E_SetAnimTrigger; // Both
+        public event Action E_ActionEnd; // Both
+        public event Action<CharacterAction> E_NewAction; // Both
+        public event Action<string> E_ResetTrigger; // Both
         #endregion
 
         #endregion
 
+        // NPC
         #region States
         [HideInInspector]
         public S_Spawn spawnState;
@@ -113,6 +80,7 @@ namespace Brad.Character
         #region MonoBehaviour
         private void OnEnable()
         {
+            // NPC
             #region State initialisation
             spawnState = new S_Spawn(this);
             despawnState = new S_Despawn(this);
@@ -125,12 +93,15 @@ namespace Brad.Character
             combatState = new S_Combat(this);
             deadState = new S_Dead(this);
             #endregion
+            #region Data initialisation
+            dataDictionary.Add("Event", EnableNPC());
+            #endregion
         }
         #endregion
 
         #region Custom Methods
 
-        public void EnableNPC(bool value)
+        public void EnableNPC(bool value) // Both
         {
             foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
             {
@@ -153,26 +124,6 @@ namespace Brad.Character
         public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
         public void Set_ResetTrigger(string name) => E_ResetTrigger.Invoke(name);
         #endregion 
-
-        #region Delegate invoke
-        public bool Get_IsNpcOutOfRange() => d_IsNpcOutOfRange.Invoke();
-        public bool Get_IsFearOverMax() => d_IsFearOverMax.Invoke();
-        public bool Get_IsCurrAnimStateThis(string name, int layer) => d_IsCurrAnimStateThis.Invoke(name, layer);
-        public bool Get_IsCurrAnimTransToThis(string name, int layer) => d_IsCurrAnimTransToThis.Invoke(name, layer);
-        public bool Get_IsCurrAnimTransFromThis(string name, int layer) => d_IsCurrAnimTransToThis.Invoke(name, layer);
-        public bool Get_NavReachedDestination() => d_NavReachedDestination.Invoke();
-        public int Get_ThreatsInProxNum() => d_ThreatsInProxNum.Invoke();
-        public int Get_AlliesInProxNum() => d_AlliesInProxNum.Invoke();
-        public int Get_ThreatsInViewNum() => d_ThreatsInViewNum.Invoke();
-        public CharacterAction Get_CurrAction() => d_CurrentAction.Invoke();
-        public Waypoint Get_CurrWaypoint() => d_CurrentWaypoint.Invoke();
-        public float Get_RemainingNavDistance() => d_RemainingNavDistance.Invoke();
-        public Vector3 Get_NavVelocity() => d_NavVelocity.Invoke();
-        public Collider Get_ClosestThreatInProx() => d_ClosestThreatInProx.Invoke();
-        public Collider Get_ClosestThreatInView() => d_ClosestThreatInView.Invoke();
-        public Collider[] Get_ThreatsInProx() => d_ThreatsInProx.Invoke();
-        public Collider[] Get_ThreatsInView() => d_ThreatsInView.Invoke();
-        #endregion
 
         #region FSM Methods
         protected override BaseState GetInitialState()

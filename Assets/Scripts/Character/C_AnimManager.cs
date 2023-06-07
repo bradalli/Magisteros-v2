@@ -5,24 +5,12 @@ using UnityEngine;
 
 public class C_AnimManager : MonoBehaviour
 {
-    NPC_Controller npcCont;
+    EventAndDataManager mang;
     Animator anim;
     private void OnEnable()
     {
-        TryGetComponent<NPC_Controller>(out npcCont);
+        TryGetComponent<EventAndDataManager>(out mang);
         anim = GetComponentInChildren<Animator>();
-        if(npcCont != null)
-        {
-            if (anim != null)
-            {
-                npcCont.E_SetAnimBool += SetBool;
-                npcCont.E_SetAnimTrigger += SetTrigger;
-                npcCont.d_IsCurrAnimStateThis += ReturnIsCurrentStateThis;
-                npcCont.d_IsCurrAnimTransToThis += ReturnIsTransToThis;
-                npcCont.d_IsCurrAnimTransFromThis += ReturnIsTransFromThis;
-                npcCont.E_ResetTrigger += ResetTrigger;
-            }
-        }
     }
 
     private void Update()

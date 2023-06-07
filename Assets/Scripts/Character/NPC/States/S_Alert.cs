@@ -37,7 +37,7 @@ public class S_Alert : BaseState
         enterTime = Time.time;
         lastLookTime = Time.time - lookAtPosLength;
 
-        _target = _cont.Get_ClosestThreatInProx();
+        //_target = _cont.Get_ClosestThreatInProx();
 
         base.Enter();
     }

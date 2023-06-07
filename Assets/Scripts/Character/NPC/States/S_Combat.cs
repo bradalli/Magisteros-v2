@@ -1,15 +1,16 @@
 using Brad.Character;
 using Brad.FSM;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class S_Combat : BaseState
 {
-    private NPC_Controller _cont;
-    IDamagable _contDmg;
-    private Collider _target;
-    IDamagable _targetDmg;
+    NPC_Controller fsMachine;
+    private EventAndDataManager mang;
+    IDamagable myDmg, targetDmg;
+    Transform target;
     float _attackDistance = 2.5f;
     float _attackDelay = 1f;
 
@@ -19,82 +20,73 @@ public class S_Combat : BaseState
 
     public S_Combat(NPC_Controller stateMachine) : base("Combat", stateMachine)
     {
-        _cont = stateMachine;
+        fsMachine = stateMachine;
     }
 
     public override void Enter()
     {
         base.Enter();
 
-        _target = ReturnTarget();
-
-        _cont.TryGetComponent<IDamagable>(out _contDmg);
-        if (_target != null)
-            _target.TryGetComponent<IDamagable>(out _targetDmg);
+        fsMachine.transform.TryGetComponent<IDamagable>(out myDmg);
+        target = mang.GetValue<Transform>("CombatTarget");
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        if (mang.GetValue<bool>("b_OutOfRangeToPlayer"))
         {
-            _cont.ChangeState(_cont.despawnState);
+            fsMachine.ChangeState(fsMachine.despawnState);
             return;
         }
 
         // -> Dead
-        if (_contDmg != null)
+        if (myDmg != null)
         {
-            if (_contDmg.Health == 0)
+            if (myDmg.Health == 0)
             {
-                _cont.ChangeState(_cont.deadState);
+                fsMachine.ChangeState(fsMachine.deadState);
             }
         }
         
         // -> Idle
-        if (_cont.Get_ThreatsInProxNum() == 0) // Need to change this to when all threats are dead
+        if (mang.GetValue<int>("i_ThreatsInProxNum") == 0) // Need to change this to when all threats are dead
         {
-            _cont.ChangeState(_cont.idleState);
+            fsMachine.ChangeState(fsMachine.idleState);
             return;
         }
 
         // -> Flee
-        if(_cont.Get_IsFearOverMax())
+        if(mang.GetValue<bool>("b_FearLevelMax"))
         {
-            _cont.ChangeState(_cont.fleeState);
+            fsMachine.ChangeState(fsMachine.fleeState);
             return;
         }
 
         // -> Search
-        if(_cont.Get_ThreatsInViewNum() == 0)
+        if(mang.GetValue<int>("i_ThreatsInViewNum") == 0)
         {
-            _cont.ChangeState(_cont.searchState);
+            fsMachine.ChangeState(fsMachine.searchState);
             return;
         }
 
-            #endregion
+        #endregion
 
         // Change target if closest threat has changed.
-        if(ReturnTarget() != null)
-        {
-            if (ReturnTarget() != _target)
-                _target = ReturnTarget();
-        }
+        target = mang.GetValue<Transform>("CombatTarget");
 
-        if(_target != null)
+        if (target != null)
         {
-            
-            if (!_cont.Get_IsCurrAnimStateThis("Attack", 0) && !(_cont.Get_IsCurrAnimTransToThis("Attack", 0) ^ _cont.Get_IsCurrAnimTransFromThis("Attack", 0)))
+            if (mang.GetValue<string>("s_CurrentAnimState") != "Attack")
             {
-                _cont.Set_NavDestination(_target.transform.position);
+                mang.TriggerEvent("StopMoving");
 
-                if(!attacking && Vector3.Distance(_cont.transform.position, _target.transform.position) < _attackDistance)
+                if(!attacking && Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
                 {
                     if((Time.time - lastAttackTime) > _attackDelay && !attacking)
                     {
-                        _cont.Set_AnimTrigger("tAttack");
-                        //Debug.Log($"LAT({lastAttackTime}s)... CAT({Time.time}s)... Diff({Time.time - lastAttackTime}s)... Delay({_attackDelay}s)");
+                        mang.TriggerEvent("Attack");
                         lastAttackTime = Time.time;
                         attacking = true;
                         return;
@@ -104,8 +96,7 @@ public class S_Combat : BaseState
 
             else
             {
-                _cont.Set_ResetTrigger("tAttack");
-                _cont.Set_NavDestination(_cont.transform.position);
+                mang.TriggerEvent("FollowCombatTarget");
                 attacking = false;
             }
         }
@@ -113,21 +104,8 @@ public class S_Combat : BaseState
 
     public override void Exit()
     {
-        _cont.Set_NavDestination(_cont.transform.position);
-        _cont.Set_LookAtPosition(_cont.transform.forward);
+        mang.TriggerEvent("StopMoving");
+        mang.TriggerEvent("StopLooking");
         base.Exit();
-    }
-
-    public Collider ReturnTarget()
-    {
-        Collider _pickTarget = null;
-
-        if (_cont.Get_ThreatsInViewNum() > 0)
-            _pickTarget = _cont.Get_ClosestThreatInView();
-
-        else
-            _pickTarget = _cont.Get_ClosestThreatInProx();
-
-        return _pickTarget;
     }
 }

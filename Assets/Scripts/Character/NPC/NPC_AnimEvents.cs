@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class NPC_AnimEvents : MonoBehaviour
 {
-    NPC_Controller npcCont;
+    EventAndDataManager mang;
 
     private void OnEnable()
     {
-        transform.parent.TryGetComponent<NPC_Controller>(out npcCont);
+        transform.parent.TryGetComponent<EventAndDataManager>(out mang);
     }
 
     public void AttackSwing()
     {
-        if (npcCont)
-            npcCont.Do_AttackSwing();
+        if (mang)
+            mang.TriggerEvent("Attack");
     }
 }
