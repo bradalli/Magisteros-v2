@@ -11,7 +11,9 @@ namespace Brad.Character
         #region Public Variables
         //Event and data handler
         IEventAndDataHandler handler;
+        [HideInInspector]
         public Dictionary<string, object> data;
+        [HideInInspector]
         public Dictionary<string, Action> events;
 
         // Attributes
@@ -28,20 +30,8 @@ namespace Brad.Character
         public Dictionary<string, Action> eventDictionary { get => events; }
         #endregion
 
-        #region Events
-        public event Action<Vector3> E_SetNavDestination; // Both
-        public event Action<Vector3> E_LookAtPosition; // NPC
-        public event Action<Waypoint> E_SetCurrWaypoint; // NPC
-        public event Action<string, bool> E_SetAnimBool; // Both
-        public event Action<string> E_SetAnimTrigger; // Both
-        public event Action E_ActionEnd; // Both
-        public event Action<CharacterAction> E_NewAction; // Both
-        public event Action<string> E_ResetTrigger; // Both
         #endregion
 
-        #endregion
-
-        // NPC
         #region States
         [HideInInspector]
         public S_Spawn spawnState;
@@ -72,6 +62,7 @@ namespace Brad.Character
         #endregion
 
         #region MonoBehaviour
+
         private void OnEnable()
         {
             // NPC
@@ -95,19 +86,16 @@ namespace Brad.Character
             #endregion
 
             #region Event initialisation
-            Action emptyAction = () => { };
-            handler.AddEvent("EnableNPC", EnableNPC);
-            handler.AddEvent("DisableNPC", DisableNPC);
+            handler.AddEvent("Enable", EnableNPC);
+            handler.AddEvent("Disable", DisableNPC);
             #endregion
         }
+
         #endregion
 
         #region Custom Methods
 
-        void DoThing()
-        {
-
-        }
+        #region Event methods
 
         void EnableNPC()
         {
@@ -119,7 +107,6 @@ namespace Brad.Character
                 }
             }
         }
-
         public void DisableNPC()
         {
             foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
@@ -133,26 +120,13 @@ namespace Brad.Character
 
         #endregion
 
-        #region Event invoke
-        public void Set_NavDestination(Vector3 position) => E_SetNavDestination.Invoke(position);
-        public void Set_LookAtPosition(Vector3 position) => E_LookAtPosition.Invoke(position);
-        public void Set_CurrentWaypoint(Waypoint waypoint) => E_SetCurrWaypoint.Invoke(waypoint);
-        public void Set_AnimBool(string boolName, bool value) => E_SetAnimBool.Invoke(boolName, value);
-        public void Set_AnimTrigger(string triggerName) => E_SetAnimTrigger.Invoke(triggerName);
-        public void Do_ActionEnd() => E_ActionEnd.Invoke();
-        public void Set_NewAction(CharacterAction newAction) => E_NewAction.Invoke(newAction);
-        public void Set_ResetTrigger(string name) => E_ResetTrigger.Invoke(name);
-        #endregion 
+        #endregion
 
         #region FSM Methods
         protected override BaseState GetInitialState()
         {
             return spawnState;
         }
-        #endregion
-
-        #region Miscellaneous
-
         #endregion
     }
 }

@@ -5,47 +5,75 @@ using UnityEngine;
 
 public class C_AnimManager : MonoBehaviour
 {
-    EventAndDataManager mang;
+    #region Private variables
+
+    IEventAndDataHandler _handler;
     Animator anim;
+    float animSpeed;
+
+    #endregion
+
+    #region MonoBehaviour
+
     private void OnEnable()
     {
-        TryGetComponent<EventAndDataManager>(out mang);
-        anim = GetComponentInChildren<Animator>();
+        // Cache components
+        TryGetComponent(out _handler);
+        TryGetComponent(out anim);
+
+        // Only continue if component(s) are found
+        if (_handler != null)
+        {
+            // Refresh data initialisation
+            _handler.AddEvent("Refresh_BaseAnimState", Refresh_BaseAnimState);
+
+            // Event initialisation
+            _handler.AddEvent("Trigger_AnimAttack", Trigger_AnimAttack);
+            _handler.AddEvent("Trigger_AnimRespawn", Trigger_AnimRespawn);
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Only continue if component(s) are found
+        if (_handler != null)
+        {
+            // Refresh data removal
+            _handler.RemoveEvent("Refresh_BaseAnimState", Refresh_BaseAnimState);
+
+            // Event removal
+            _handler.RemoveEvent("Do_AttackSwing", Trigger_AnimAttack);
+        }
     }
 
     private void Update()
     {
-        if(npcCont)
-            anim.SetFloat("Forward", npcCont.Get_NavVelocity().magnitude);
+        if(_handler != null)
+        {
+            // Set the anim float to drive the blend tree (to make the character run)
+            _handler.TriggerEvent("Refresh_VelocityV");
+            anim.SetFloat("Forward", _handler.GetValue<Vector3>("VelocityV").magnitude);
+
+            // #CONSIDER# - Allowing strafing, not just moving forward!
+        }
     }
 
-    bool ReturnIsCurrentStateThis(string name, int layer)
-    {
-        return anim.GetNextAnimatorStateInfo(layer).IsName(name);
-    }
+    #endregion
 
-    bool ReturnIsTransToThis(string name, int layer)
-    {
-        return anim.GetAnimatorTransitionInfo(layer).IsName($"Move -> {name}");
-    }
+    #region Custom methods
 
-    bool ReturnIsTransFromThis(string name, int layer)
-    {
-        return anim.GetAnimatorTransitionInfo(layer).IsName($"{name} -> Move");
-    }
+    #region Refresh data methods
 
-    void SetBool(string name, bool value)
-    {
-        anim.SetBool(name, value);
-    }
+    void Refresh_BaseAnimState() => _handler.SetValue("CurrAnimState", anim.GetCurrentAnimatorStateInfo(0));
 
-    void SetTrigger(string name)
-    {
-        anim.SetTrigger(name);
-    }
+    #endregion
 
-    void ResetTrigger(string name)
-    {
-        anim.ResetTrigger(name);
-    }
+    #region Event methods
+
+    void Trigger_AnimAttack() => anim.SetTrigger("tAttack");
+    void Trigger_AnimRespawn() => anim.SetTrigger("tRespawn");
+
+    #endregion
+
+    #endregion
 }

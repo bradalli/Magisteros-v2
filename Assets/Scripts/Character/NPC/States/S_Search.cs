@@ -8,6 +8,7 @@ using UnityEngine.AI;
 public class S_Search : BaseState
 {
     private NPC_Controller _cont;
+    private IEventAndDataHandler _handler;
 
     Vector3 startPosition;
     float searchTimeLength = 20f;
@@ -29,6 +30,10 @@ public class S_Search : BaseState
         enterTime = Time.time;
         startPosition = _cont.transform.position;
 
+        _cont.TryGetComponent(out _handler);
+
+        _handler.TriggerEvent("Start_Move");
+
         // Find a random position within the searchRange and sample it from the nav mesh.
         Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
         SetNavPosition(randomPosition);
@@ -40,7 +45,8 @@ public class S_Search : BaseState
 
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        _handler.TriggerEvent("Refresh_InRangeToPlayerB");
+        if (!_handler.GetValue<bool>("InRangeToPlayerB"))
         {
             _cont.ChangeState(_cont.despawnState);
             return;
@@ -54,7 +60,8 @@ public class S_Search : BaseState
         }
 
         // -> Combat
-        if (_cont.Get_ThreatsInViewNum() > 0)
+        _handler.TriggerEvent("Refresh_ViewContainsThreatB");
+        if (_handler.GetValue<bool>("ViewContainsThreatB"))
         {
             _cont.ChangeState(_cont.combatState);
             return;
@@ -62,8 +69,8 @@ public class S_Search : BaseState
         #endregion
 
         //Debug.Log(_cont.Get_RemainingNavDistance());
-
-        if(_cont.Get_NavReachedDestination())
+        _handler.TriggerEvent("Refresh_DestinationReachB");
+        if(_handler.GetValue<bool>("DestinationReachB"))
         {
             // Find a random position within the searchRange and sample it from the nav mesh.
             Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
@@ -99,6 +106,8 @@ public class S_Search : BaseState
             else
                 Debug.LogError("NavMesh sample attempts limit reached");
         }*/
-        _cont.Set_NavDestination(desiredPosition);
+        //_cont.Set_NavDestination(desiredPosition);
+        _handler.SetValue("DestinationV", desiredPosition);
+        _handler.TriggerEvent("Refresh_DestinationV");
     }
 }

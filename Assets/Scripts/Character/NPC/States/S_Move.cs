@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class S_Move : BaseState
 {
+    private IEventAndDataHandler _handler;
     private NPC_Controller _cont;
     private Waypoint _wayp;
     public S_Move(NPC_Controller stateMachine) : base("Move", stateMachine)
@@ -16,46 +17,55 @@ public class S_Move : BaseState
     public override void Enter()
     {
         base.Enter();
-
-        _wayp = _cont.Get_CurrWaypoint();
+        _handler.TriggerEvent("Refresh_CurrWp");
+        _wayp = _handler.GetValue<Waypoint>("CurrWp");
 
         if (_wayp.transform.position != Vector3.zero)
-            _cont.Set_NavDestination(_cont.Get_CurrWaypoint().transform.position);
+        {
+            _handler.SetValue("DestinationV", _wayp.transform.position);
+            _handler.TriggerEvent("Refresh_DestinationV");
+            _handler.TriggerEvent("Start_Move");
+        }
+            
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        _handler.TriggerEvent("Refresh_InRangeToPlayerB");
+        if (!_handler.GetValue<bool>("InRangeToPlayerB"))
         {
             _cont.ChangeState(_cont.despawnState);
             return;
         }
 
         // -> Alert
-        if (_cont.Get_ThreatsInProxNum() > 0)
+        _handler.TriggerEvent("Refresh_ProxContainsThreatB");
+        if (_handler.GetValue<bool>("ProxContainsThreatB"))
         {
             _cont.ChangeState(_cont.alertState);
             return;
         }
 
         // -> Perform
-        if (_cont.Get_CurrAction() != null)
+        /*if (_cont.Get_CurrAction() != null)
         {
             _cont.ChangeState(_cont.performState);
             return;
-        }
-            
+        }*/
+
         // -> Idle
-        if (_cont.Get_CurrWaypoint() == null)
+        _handler.TriggerEvent("Refresh_CurrWp");
+        if (_handler.GetValue<Waypoint>("CurrWp") != null)
         {
             _cont.ChangeState(_cont.idleState);
             return;
         }
         #endregion
 
-        if (_cont.Get_RemainingNavDistance() <= 0.05f)
+        _handler.TriggerEvent("Refresh_DestinationReachB");
+        if (_handler.GetValue<bool>("DestinationReachB"))
         {
             if(_wayp.nextWp != null)
             {

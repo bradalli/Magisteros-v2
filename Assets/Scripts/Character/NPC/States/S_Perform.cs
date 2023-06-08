@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class S_Perform : BaseState
 {
+    IEventAndDataHandler _handler;
     private NPC_Controller _cont;
     private CharacterAction _action;
     public S_Perform(NPC_Controller stateMachine) : base("Peform", stateMachine)
@@ -16,7 +17,7 @@ public class S_Perform : BaseState
     public override void Enter()
     {
         base.Enter();
-
+        /*
         _action = _cont.Get_CurrAction();
 
         if (_action.position != Vector3.zero)
@@ -26,32 +27,36 @@ public class S_Perform : BaseState
             _cont.Set_NavDestination(_cont.transform.position);
 
         if (_action != null)
-            _action.Start();
+            _action.Start();*/
+        _cont.TryGetComponent(out _handler);
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        _handler.TriggerEvent("Refresh_InRangeToPlayerB");
+        if (!_handler.GetValue<bool>("InRangeToPlayerB"))
         {
             _cont.ChangeState(_cont.despawnState);
             return;
         }
 
         // -> Alert
-        if (_cont.Get_ThreatsInProxNum() > 0)
+        _handler.TriggerEvent("Refresh_ProxContainsThreatB");
+        if (_handler.GetValue<bool>("ProxContainsThreatB"))
         {
             _cont.ChangeState(_cont.alertState);
             return;
         }
 
         // -> Idle
+        /*
         if (_cont.Get_CurrAction() == null)
         {
             _cont.ChangeState(_cont.idleState);
             return;
-        }
+        }*/
         #endregion
 
         if (_action != null)
@@ -59,7 +64,7 @@ public class S_Perform : BaseState
 
         if(_action.actionState == CharacterAction.state.Complete)
         {
-            _cont.Do_ActionEnd();
+            //_cont.Do_ActionEnd();
         }
     }
 

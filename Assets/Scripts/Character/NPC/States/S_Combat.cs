@@ -8,7 +8,7 @@ using UnityEngine;
 public class S_Combat : BaseState
 {
     NPC_Controller fsMachine;
-    private EventAndDataManager mang;
+    private IEventAndDataHandler _handler;
     IDamagable myDmg, targetDmg;
     Transform target;
     float _attackDistance = 2.5f;
@@ -28,14 +28,14 @@ public class S_Combat : BaseState
         base.Enter();
 
         fsMachine.transform.TryGetComponent<IDamagable>(out myDmg);
-        target = mang.GetValue<Transform>("CombatTarget");
+        target = _handler.GetValue<Transform>("CombatTarget");
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (mang.GetValue<bool>("b_OutOfRangeToPlayer"))
+        if (_handler.GetValue<bool>("b_OutOfRangeToPlayer"))
         {
             fsMachine.ChangeState(fsMachine.despawnState);
             return;
@@ -51,21 +51,21 @@ public class S_Combat : BaseState
         }
         
         // -> Idle
-        if (mang.GetValue<int>("i_ThreatsInProxNum") == 0) // Need to change this to when all threats are dead
+        if (_handler.GetValue<int>("i_ThreatsInProxNum") == 0) // Need to change this to when all threats are dead
         {
             fsMachine.ChangeState(fsMachine.idleState);
             return;
         }
 
         // -> Flee
-        if(mang.GetValue<bool>("b_FearLevelMax"))
+        if(_handler.GetValue<bool>("b_FearLevelMax"))
         {
             fsMachine.ChangeState(fsMachine.fleeState);
             return;
         }
 
         // -> Search
-        if(mang.GetValue<int>("i_ThreatsInViewNum") == 0)
+        if(_handler.GetValue<int>("i_ThreatsInViewNum") == 0)
         {
             fsMachine.ChangeState(fsMachine.searchState);
             return;
@@ -74,19 +74,19 @@ public class S_Combat : BaseState
         #endregion
 
         // Change target if closest threat has changed.
-        target = mang.GetValue<Transform>("CombatTarget");
+        target = _handler.GetValue<Transform>("CombatTarget");
 
         if (target != null)
         {
-            if (mang.GetValue<string>("s_CurrentAnimState") != "Attack")
+            if (_handler.GetValue<string>("s_CurrentAnimState") != "Attack")
             {
-                mang.TriggerEvent("StopMoving");
+                _handler.TriggerEvent("StopMoving");
 
                 if(!attacking && Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
                 {
                     if((Time.time - lastAttackTime) > _attackDelay && !attacking)
                     {
-                        mang.TriggerEvent("Attack");
+                        _handler.TriggerEvent("Attack");
                         lastAttackTime = Time.time;
                         attacking = true;
                         return;
@@ -96,7 +96,7 @@ public class S_Combat : BaseState
 
             else
             {
-                mang.TriggerEvent("FollowCombatTarget");
+                _handler.TriggerEvent("FollowCombatTarget");
                 attacking = false;
             }
         }
@@ -104,8 +104,8 @@ public class S_Combat : BaseState
 
     public override void Exit()
     {
-        mang.TriggerEvent("StopMoving");
-        mang.TriggerEvent("StopLooking");
+        _handler.TriggerEvent("StopMoving");
+        _handler.TriggerEvent("StopLooking");
         base.Exit();
     }
 }

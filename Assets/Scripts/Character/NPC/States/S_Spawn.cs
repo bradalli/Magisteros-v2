@@ -6,38 +6,49 @@ using UnityEngine;
 
 public class S_Spawn : BaseState
 {
-    private NPC_Controller _cont;
-    public S_Spawn(NPC_Controller stateMachine) : base("Spawn", stateMachine) 
-    {
-        _cont = stateMachine;
-    }
+    #region Private variables
+
+    private NPC_Controller fsMachine;
+    private IEventAndDataHandler _handler;
+    private IDamagable _dmg;
+
+    #endregion
 
     #region State methods
+
+    public S_Spawn(NPC_Controller stateMachine) : base("Spawn", stateMachine)
+    {
+        fsMachine = stateMachine;
+        fsMachine.TryGetComponent(out _dmg);
+    }
     public override void Enter()
     {
         base.Enter();
-        _cont.EnableNPC(false);
-        _cont.Set_AnimTrigger("tRespawn");
+        _handler.TriggerEvent("Disable");
+        _handler.TriggerEvent("Trigger_AnimRespawn");
     }
 
     public override void UpdateState()
     {
-        if (!_cont.Get_IsNpcOutOfRange())
+        // Refresh value in case it has changed
+        _handler.TriggerEvent("Refresh_InRangeOfPlayerB");
+        
+        // Retrieve value from handler and only advance if npc is within range of player
+        if (!_handler.GetValue<bool>("InRangeOfPlayerB"))
         {
-            _cont.EnableNPC(true);
-            _cont.TryGetComponent<IDamagable>(out IDamagable _contDmg);
-            if (_contDmg != null)
+            _handler.TriggerEvent("Enable");
+            
+            if (_dmg != null)
             {
-                _contDmg.MaxHealth = _cont.maxHealth;
-                _contDmg.Health = _cont.MaxHealth;
+                _dmg.ResetHealth();
             }
-            _cont.ChangeState(_cont.idleState);
+
+            fsMachine.ChangeState(fsMachine.idleState);
         }
     }
 
     public override void Exit()
     {
-        
         base.Exit();  
     }
     #endregion

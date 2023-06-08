@@ -10,30 +10,36 @@ namespace Brad.Character
 {
     public class C_Awareness : MonoBehaviour
     {
-        #region Public and Serialized variables
+        #region Private variables
 
-        [Header("View Cone Attributes")]
-        public float viewConeFov = 60f;
-        public float viewConeMaxDistance = 5f;
+        private float viewConeFov = 60f;
+        private float viewConeMaxDistance = 5f;
+        [HideInInspector]
         public List<Collider> targetsInView;
 
-        [Header("Proximity Attributes")]
-        [SerializeField] LayerMask proximityMask;
-        [SerializeField] float proximityRange = 10f;
+        private LayerMask proximityMask;
+        private float proximityRange = 10f;
+        [HideInInspector]
         public List<Collider> targetsInProximity;
-        #endregion
 
-        #region Private variables
+        IEventAndDataHandler _handler;
         Collider myCollider;
-        C_Controller cont;
+        Transform meshT;
+
         #endregion
 
         #region Monobehaviour
 
-        private void Awake()
+        private void OnEnable()
         {
             TryGetComponent(out myCollider);
-            TryGetComponent(out cont);
+            TryGetComponent(out _handler);
+
+            if (_handler != null)
+            {
+                _handler.TriggerEvent("Refresh_MeshT");
+                meshT = _handler.GetValue<Transform>("MeshT");
+            }
         }
 
         private void Update()
@@ -57,7 +63,7 @@ namespace Brad.Character
                 Gizmos.color = Color.blue;
                 if (targetsInProximity.Count > 0)
                 {
-                    Gizmos.DrawLine(transform.position, FindClosestTargetInProximity().transform.position);
+                    Gizmos.DrawLine(transform.position, FindClosestInProximity().transform.position);
                 }
                     
                 // View cone gizmos
@@ -67,8 +73,8 @@ namespace Brad.Character
                 float rayRange = viewConeMaxDistance;
                 Quaternion leftRayRotation = Quaternion.AngleAxis(-totalFOV, Vector3.up);
                 Quaternion rightRayRotation = Quaternion.AngleAxis(totalFOV, Vector3.up);
-                Vector3 leftRayDirection = leftRayRotation * cont.meshT.forward;
-                Vector3 rightRayDirection = rightRayRotation * cont.meshT.forward;
+                Vector3 leftRayDirection = leftRayRotation * meshT.forward;
+                Vector3 rightRayDirection = rightRayRotation * meshT.forward;
                 Gizmos.DrawRay(transform.position, leftRayDirection * rayRange);
                 Gizmos.DrawRay(transform.position, rightRayDirection * rayRange);
                 Handles.color = Color.yellow;
@@ -83,6 +89,12 @@ namespace Brad.Character
         #endregion
 
         #region Custom methods
+
+        #region Refresh data methods
+
+        
+
+        #endregion
 
         List<Collider> FindTargetsInProximity(Vector3 origin, float range, LayerMask mask)
         {
@@ -114,7 +126,7 @@ namespace Brad.Character
                 foreach (Collider c in targetsInProximity)
                 {
                     Vector3 targetDir = (c.transform.position - transform.position).normalized;
-                    float angle = Vector3.Angle(targetDir, cont.meshT.forward);
+                    float angle = Vector3.Angle(targetDir, meshT.forward);
                     float distance = Vector3.Distance(transform.position, c.transform.position);
 
                     if (angle < viewConeFov && distance < viewConeMaxDistance)
@@ -128,8 +140,7 @@ namespace Brad.Character
 
             return targetsInView;
         }
-
-        public Collider FindClosestTargetInProximity()
+        public Collider FindClosestInProximity()
         {
             // Returns the closest target that is in the proximity.
             Collider closest = null;
@@ -173,6 +184,7 @@ namespace Brad.Character
 
             return closest;
         }
+
         #endregion
     }
 }
