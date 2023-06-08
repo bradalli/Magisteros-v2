@@ -8,31 +8,46 @@ public class C_Move : MonoBehaviour
 {
     [SerializeField] float lookSpeed = 5f;
 
-    private NPC_Controller npcCont;
+    private IEventAndDataHandler _handler;
     private NavMeshAgent navAgent;
+    private Transform meshTransform;
+
     public Waypoint currentWaypoint;
 
+    bool lookAtTarget = false;
     private Vector3 targetLookDir = Vector3.forward;
     public Vector3 lookAtPosition;
+    private Transform lookTarget;
+    
 
     private void OnEnable()
     {
-        TryGetComponent<NPC_Controller>(out npcCont);
+        TryGetComponent<IEventAndDataHandler>(out _handler);
         TryGetComponent<NavMeshAgent>(out navAgent);
-        if (npcCont != null)
+        if (_handler != null)
         {
-            npcCont.d_CurrentWaypoint += ReturnCurrentWaypoint;
+            //npcCont.d_CurrentWaypoint += ReturnCurrentWaypoint;
+            _handler.AddEvent("Update_CurrWp", Update_CurrentWaypoint);
 
             if (navAgent != null)
             {
-                npcCont.d_RemainingNavDistance += ReturnRemainingNavDistance;
-                npcCont.d_NavVelocity += ReturnVelocity;
-                npcCont.d_NavReachedDestination += ReturnReachedDestination;
+                // Update data initialisation
+                _handler.AddEvent("Update_MeshTransform", Update_MeshTransform);
+                _handler.AddEvent("Update_NavAgentInfo", Update_NavAgentDestInfo);
+                _handler.AddEvent("Update_NavVelocity", Update_NavAgentVelocity);
+                _handler.AddEvent("Update_NavDestination", Update_NavAgentDestination);
+                _handler.AddEvent("Update_LookTarget", Update_LookTarget);
 
-                npcCont.E_SetNavDestination += SetAgentDestination;
-                npcCont.E_LookAtPosition += SetLookAtPosition;
+                // Event initialisation
+                _handler.AddEvent("Start_NavMove", Start_NavMove);
+                _handler.AddEvent("Stop_NavMove", Stop_NavMove);
+                _handler.AddEvent("Start_LookAtTarget", Start_LookingAtTarget);
+                _handler.AddEvent("Stop_LookAtTarget", Stop_LookingAtTarget);
             }
         }
+
+        else
+            Debug.LogError(_handler.GetType().ToString() + " could not be found");
     }
 
     private void Update()
@@ -43,44 +58,38 @@ public class C_Move : MonoBehaviour
     void Look()
     {
         if (lookAtPosition == Vector3.zero && navAgent.velocity.normalized.magnitude > 0)
-            targetLookDir = Vector3.RotateTowards(npcCont.meshT.forward, navAgent.velocity.normalized, lookSpeed * Time.deltaTime, 0);
+            targetLookDir = Vector3.RotateTowards(meshTransform.forward, navAgent.velocity.normalized, lookSpeed * Time.deltaTime, 0);
 
         if(lookAtPosition != Vector3.zero)
-            targetLookDir = Vector3.RotateTowards(npcCont.meshT.forward, lookAtPosition, lookSpeed * Time.deltaTime, 1);
+            targetLookDir = Vector3.RotateTowards(meshTransform.forward, lookAtPosition, lookSpeed * Time.deltaTime, 1);
 
         // Ensure targetLookDir.y is 0
         targetLookDir = new Vector3(targetLookDir.x, 0, targetLookDir.z);
-        
-        npcCont.meshT.rotation = Quaternion.LookRotation(targetLookDir, npcCont.meshT.up);
+
+        meshTransform.rotation = Quaternion.LookRotation(targetLookDir, meshTransform.up);
     }
 
-    public void SetLookAtPosition(Vector3 position)
-    {
-        lookAtPosition = position;
-    }
+    #region Update data methods
 
-    public void SetAgentDestination(Vector3 position)
+    void Update_MeshTransform() => meshTransform = _handler.GetValue<Transform>("MeshTransform");
+    void Update_CurrentWaypoint() => _handler.SetValue("Waypoint_Current", currentWaypoint);
+    void Update_NavAgentDestInfo()
     {
-        navAgent.SetDestination(position);
+        _handler.SetValue("Nav_ReachedDest", navAgent.remainingDistance <= navAgent.stoppingDistance);
+        _handler.SetValue("Nav_RemainingDist", navAgent.remainingDistance);
     }
+    void Update_NavAgentVelocity() => _handler.SetValue("Nav_Velocity", navAgent.velocity);
+    void Update_NavAgentDestination() => navAgent.destination = _handler.GetValue<Vector3>("Nav_Destination");
+    void Update_LookTarget() => lookTarget = _handler.GetValue<Transform>("TargetTransform");
 
-    public float ReturnRemainingNavDistance()
-    {
-        return navAgent.remainingDistance;
-    }
+    #endregion
 
-    public Waypoint ReturnCurrentWaypoint()
-    {
-        return currentWaypoint;
-    }
+    #region Event methods
 
-    public Vector3 ReturnVelocity()
-    {
-        return navAgent.velocity;
-    }
+    void Start_NavMove() => navAgent.isStopped = false;
+    void Stop_NavMove() => navAgent.isStopped = true;
+    void Start_LookingAtTarget() => lookAtTarget = true;
+    void Stop_LookingAtTarget() => lookAtTarget = false;
 
-    public bool ReturnReachedDestination()
-    {
-        return navAgent.remainingDistance <= navAgent.stoppingDistance;
-    }
+    #endregion
 }

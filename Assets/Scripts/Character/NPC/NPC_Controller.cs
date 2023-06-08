@@ -6,32 +6,26 @@ using UnityEngine;
 
 namespace Brad.Character
 {
-    public class NPC_Controller : StateMachine, IDataManager, IDamagable
+    public class NPC_Controller : StateMachine, IEventAndDataHandler, IDamagable
     {
         #region Public Variables
-        // Data handler
+        //Event and data handler
+        IEventAndDataHandler handler;
         public Dictionary<string, object> data;
+        public Dictionary<string, Action> events;
 
         // Attributes
         public float fleeDistance = 15f; // NPC
 
         // Stats
-        public int maxHealth = 100; // Both
-        public int health; // Both
+        public int maxHealth = 100;
+        public int health;
 
-        // Both
         #region Interface instance properties
-        public int MaxHealth
-        {
-            get { return maxHealth; }
-            set { maxHealth = value; }
-        }
-        public int Health
-        {
-            get { return health; }
-            set { health = value; }
-        }
+        public int MaxHealth { get => maxHealth; set => maxHealth = value; }
+        public int Health { get => health; set => health = value; }
         public Dictionary<string, object> dataDictionary { get => data; }
+        public Dictionary<string, Action> eventDictionary { get => events; }
         #endregion
 
         #region Events
@@ -93,21 +87,46 @@ namespace Brad.Character
             combatState = new S_Combat(this);
             deadState = new S_Dead(this);
             #endregion
+
+            handler = GetComponent<IEventAndDataHandler>();
+
             #region Data initialisation
-            dataDictionary.Add("Event", EnableNPC());
+
+            #endregion
+
+            #region Event initialisation
+            Action emptyAction = () => { };
+            handler.AddEvent("EnableNPC", EnableNPC);
+            handler.AddEvent("DisableNPC", DisableNPC);
             #endregion
         }
         #endregion
 
         #region Custom Methods
 
-        public void EnableNPC(bool value) // Both
+        void DoThing()
+        {
+
+        }
+
+        void EnableNPC()
         {
             foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
             {
                 if (comp != this)
                 {
-                    comp.enabled = value;
+                    comp.enabled = true;
+                }
+            }
+        }
+
+        public void DisableNPC()
+        {
+            foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
+            {
+                if (comp != this)
+                {
+                    comp.enabled = false;
                 }
             }
         }

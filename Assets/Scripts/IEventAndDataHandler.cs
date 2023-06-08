@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EventAndDataManager : MonoBehaviour
+public interface IEventAndDataHandler
 {
     #region Data handling
-    private Dictionary<string, object> dataDictionary;
+    public Dictionary<string, object> dataDictionary { get; }
 
     public void SetValue<T>(string key, T value)
     {
@@ -26,7 +26,7 @@ public class EventAndDataManager : MonoBehaviour
     #endregion
 
     #region Event handling
-    private Dictionary<string, Action> eventDictionary;
+    public Dictionary<string, Action> eventDictionary { get; }
 
     public void AddEvent(string eventName, Action eventAction)
     {
@@ -46,10 +46,16 @@ public class EventAndDataManager : MonoBehaviour
     public void TriggerEvent(string eventName)
     {
         if (eventDictionary.ContainsKey(eventName))
-            eventDictionary[eventName]?.Invoke();
+        {
+            if (eventDictionary[eventName].GetInvocationList().Length > 0)
+                eventDictionary[eventName]?.Invoke();
+
+            else
+                Debug.LogWarning($"The invocation list for '{eventName}' is empty.");
+        }
 
         else
-            Debug.LogWarning($"{gameObject.name} does not define an event for '{eventName}'");
+            Debug.LogWarning($"A script does not define an event for '{eventName}'");
     }
     #endregion
 }
