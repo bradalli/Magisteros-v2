@@ -26,7 +26,6 @@ public class C_Move : MonoBehaviour
         TryGetComponent<NavMeshAgent>(out navAgent);
         if (_handler != null)
         {
-            //npcCont.d_CurrentWaypoint += ReturnCurrentWaypoint;
             _handler.AddEvent("Update_CurrWp", Update_CurrentWaypoint);
 
             if (navAgent != null)
