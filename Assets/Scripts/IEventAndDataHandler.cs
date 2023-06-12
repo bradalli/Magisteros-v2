@@ -28,7 +28,7 @@ public interface IEventAndDataHandler
             return (T)dataDictionary[key];
 
         else
-            Debug.LogError("Key doesn't exist in data dictionary.");
+            Debug.LogError($"The key ({key}) doesn't exist in data dictionary.");
 
         return default(T); // Return default value if key doesn't exist.
     }

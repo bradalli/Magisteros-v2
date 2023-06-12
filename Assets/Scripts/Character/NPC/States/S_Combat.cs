@@ -25,19 +25,25 @@ public class S_Combat : BaseState
 
     public override void Enter()
     {
+        fsMachine.TryGetComponent<IEventAndDataHandler>(out _handler);
         base.Enter();
 
-        fsMachine.transform.TryGetComponent<IDamagable>(out myDmg);
-        target = _handler.GetValue<Transform>("CombatTarget");
+        fsMachine.transform.TryGetComponent(out myDmg);
+        target = _handler.GetValue<Transform>("T_ClosestThreatInView");
+
+
+        _handler.TriggerEvent("Start_Move");
+        _handler.TriggerEvent("Start_LookAt");
+        _handler.TriggerEvent("Start_Combat");
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (_handler.GetValue<bool>("b_OutOfRangeToPlayer"))
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
-            fsMachine.ChangeState(fsMachine.despawnState);
+            fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
@@ -46,49 +52,48 @@ public class S_Combat : BaseState
         {
             if (myDmg.Health == 0)
             {
-                fsMachine.ChangeState(fsMachine.deadState);
+                fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Dead"));
             }
         }
         
         // -> Idle
-        if (_handler.GetValue<int>("i_ThreatsInProxNum") == 0) // Need to change this to when all threats are dead
+        if (!_handler.GetValue<bool>("B_ProxContainsThreat")) // Need to change this to when all threats are dead
         {
-            fsMachine.ChangeState(fsMachine.idleState);
+            fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
 
         // -> Flee
-        if(_handler.GetValue<bool>("b_FearLevelMax"))
+        if(_handler.GetValue<bool>("B_IsFearful"))
         {
-            fsMachine.ChangeState(fsMachine.fleeState);
+            fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Flee"));
             return;
         }
 
         // -> Search
-        if(_handler.GetValue<int>("i_ThreatsInViewNum") == 0)
+        if(!_handler.GetValue<bool>("B_ViewContainsThreat"))
         {
-            fsMachine.ChangeState(fsMachine.searchState);
+            fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Search"));
             return;
         }
 
         #endregion
 
         // Change target if closest threat has changed.
-        target = _handler.GetValue<Transform>("CombatTarget");
+        target = _handler.GetValue<Transform>("T_ClosestThreatInView");
 
         if (target != null)
         {
-            if (_handler.GetValue<string>("s_CurrentAnimState") != "Attack")
+            if (!_handler.GetValue<bool>("B_Attacking"))
             {
-                _handler.TriggerEvent("StopMoving");
+                _handler.TriggerEvent("Stop_Move");
 
                 if(!attacking && Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
                 {
                     if((Time.time - lastAttackTime) > _attackDelay && !attacking)
                     {
-                        _handler.TriggerEvent("Attack");
+                        _handler.TriggerEvent("Start_Attack");
                         lastAttackTime = Time.time;
-                        attacking = true;
                         return;
                     }
                 }
@@ -96,7 +101,7 @@ public class S_Combat : BaseState
 
             else
             {
-                _handler.TriggerEvent("FollowCombatTarget");
+                _handler.TriggerEvent("Start_Move");
                 attacking = false;
             }
         }
@@ -104,8 +109,9 @@ public class S_Combat : BaseState
 
     public override void Exit()
     {
-        _handler.TriggerEvent("StopMoving");
-        _handler.TriggerEvent("StopLooking");
+        _handler.TriggerEvent("Stop_Move");
+        _handler.TriggerEvent("Stop_LookAt");
+        _handler.TriggerEvent("Stop_Combat");
         base.Exit();
     }
 }

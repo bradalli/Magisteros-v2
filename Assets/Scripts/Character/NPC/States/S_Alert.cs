@@ -30,6 +30,8 @@ public class S_Alert : BaseState
 
     public override void Enter()
     {
+        _cont.TryGetComponent(out _handler);
+
         _handler.TriggerEvent("Start_Combat");
         _handler.TriggerEvent("Stop_Move");
 

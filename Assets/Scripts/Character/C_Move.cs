@@ -20,7 +20,8 @@ public class C_Move : MonoBehaviour
     bool lookAtTargetB = false;
     private Vector3 lookAtDir = Vector3.forward;
     private Vector3 targetLookDir;
-    private Transform lookTargetT;
+    private Transform followTarget;
+    private Transform lookTarget;
     private Vector3 lookPos;
     #endregion
 
@@ -42,6 +43,7 @@ public class C_Move : MonoBehaviour
             _handler.AddEvent("Get_V_Destination", Get_Destination);
             _handler.AddEvent("Get_T_LookTarget", Get_LookTarget);
             _handler.AddEvent("Get_V_LookPosition", Get_LookPosition);
+            _handler.AddEvent("Get_T_FollowTarget", Get_FollowTarget);
 
             // Update data initialisation SET
             _handler.AddEvent("Set_B_DestinationReach", Set_DestinationReach);
@@ -75,8 +77,9 @@ public class C_Move : MonoBehaviour
     void Get_MoveSpeed() => moveSpeed = _handler.GetValue<float>("F_MoveSpeed");
     void Get_Mesh() => mesh = _handler.GetValue<Transform>("T_Mesh");
     void Get_Destination() => navAgent.destination = _handler.GetValue<Vector3>("V_Destination");
-    void Get_LookTarget() => lookTargetT = _handler.GetValue<Transform>("T_LookTarget");
+    void Get_LookTarget() => lookTarget = _handler.GetValue<Transform>("T_LookTarget");
     void Get_LookPosition() => lookPos = _handler.GetValue<Vector3>("V_LookPosition");
+    void Get_FollowTarget() => followTarget = _handler.GetValue<Transform>("T_FollowTarget");
 
     void Set_CurrWp() => _handler.SetValue("W_CurrWp", currentWaypoint);
     void Set_DestinationReach() => _handler.SetValue("B_DestinationReach",
@@ -105,8 +108,8 @@ public class C_Move : MonoBehaviour
     void Look()
     {
         // Only look at target if bool is true and target is also not null
-        targetLookDir = lookAtTargetB && lookTargetT ? 
-            navAgent.transform.position - lookTargetT.position : navAgent.velocity.normalized;
+        targetLookDir = lookAtTargetB && lookTarget ? 
+            navAgent.transform.position - lookTarget.position : navAgent.velocity.normalized;
         
         // Rotate mesh to look at lookAtDir at the speed of lookSpeed
         lookAtDir = Vector3.RotateTowards(mesh.forward, targetLookDir, lookSpeed * Time.deltaTime, 1);

@@ -9,7 +9,7 @@ public class C_Combat : MonoBehaviour
     #region Private variables
 
     IEventAndDataHandler _handler;
-    
+
     int damage = 5;
 
     Transform meshT;
@@ -32,6 +32,8 @@ public class C_Combat : MonoBehaviour
 
             // Event initialisation
             _handler.AddEvent("AttackHit", AttackCast);
+            _handler.AddEvent("Start_Attack", Start_Attack);
+            _handler.AddEvent("Stop_Attack", Stop_Attack);
         }
     }
 
@@ -79,6 +81,8 @@ public class C_Combat : MonoBehaviour
                 targetDmg.Damage(damage);
         }
     }
+    void Start_Attack() => _handler.SetValue("B_Attacking", true);
+    void Stop_Attack() => _handler.SetValue("B_Attacking", false);
 
     #endregion
 

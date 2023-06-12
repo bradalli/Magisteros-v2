@@ -30,6 +30,8 @@ namespace Brad.Character
                 _handler.AddEvent("Set_T_ClosestThreatInView", Set_ClosestThreatInView);
                 _handler.AddEvent("Set_B_ProxContainsThreat", Set_ProxContainsThreat);
                 _handler.AddEvent("Set_B_ViewContainsThreat", Set_ViewContainsThreat);
+                _handler.AddEvent("Set_V_ProxThreatsAvgPosition", Set_ProxThreatsAvgPosition);
+                _handler.AddEvent("Set_V_ViewThreatsAvgPosition", Set_ViewThreatsAvgPosition);
                 _handler.AddEvent("Set_B_InRangeOfPlayer", Set_InRangeOfPlayer);
                 _handler.AddEvent("Set_B_IsFearful", Set_IsFearful);
 
@@ -69,6 +71,10 @@ namespace Brad.Character
             NumberOfTypeInList(targetType.Threat, targetsInProximity) > 0);
         void Set_ViewContainsThreat() => _handler.SetValue("B_ViewContainsThreat",
             NumberOfTypeInList(targetType.Threat, targetsInView) > 0);
+        void Set_ProxThreatsAvgPosition() => _handler.SetValue("V_ProxThreatsAvgPosition",
+            AveragePositionOfTypeInList(targetType.Threat, targetsInProximity));
+        void Set_ViewThreatsAvgPosition() => _handler.SetValue("V_ViewThreatsAvgPosition",
+            AveragePositionOfTypeInList(targetType.Threat, targetsInView));
         void Set_InRangeOfPlayer() => _handler.SetValue("B_InRangeOfPlayer", InRangeOfPlayer());
         void Set_IsFearful() => _handler.SetValue("B_IsFearful", IsNpcFearful());
 
@@ -157,6 +163,28 @@ namespace Brad.Character
             }
 
             return closest;
+        }
+        Vector3 AveragePositionOfTypeInList(targetType type, List<Collider> list)
+        {
+            Vector3 averagePosition = Vector3.zero;
+
+            foreach (Collider c in list)
+            {
+                switch (type)
+                {
+                    case targetType.Ally:
+                        averagePosition += c.transform.position;
+                        break;
+
+                    case targetType.Threat:
+                        averagePosition += c.transform.position;
+                        break;
+                }
+            }
+
+            averagePosition /= list.Count;
+
+            return averagePosition;
         }
         #endregion
     }

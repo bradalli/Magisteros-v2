@@ -16,6 +16,8 @@ public class S_Move : BaseState
 
     public override void Enter()
     {
+        _cont.TryGetComponent(out _handler);
+
         base.Enter();
         _wayp = _handler.GetValue<Waypoint>("W_CurrWp");
 

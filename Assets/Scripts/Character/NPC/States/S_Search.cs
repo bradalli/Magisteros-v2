@@ -26,6 +26,7 @@ public class S_Search : BaseState
 
     public override void Enter()
     {
+        _cont.TryGetComponent(out _handler);
         base.Enter();
         enterTime = Time.time;
         startPosition = _cont.transform.position;

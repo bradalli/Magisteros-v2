@@ -23,6 +23,8 @@ public class S_Spawn : BaseState
     }
     public override void Enter()
     {
+        fsMachine.TryGetComponent(out _handler);
+
         base.Enter();
         _handler.TriggerEvent("Disable_C");
         _handler.TriggerEvent("Respawn");
