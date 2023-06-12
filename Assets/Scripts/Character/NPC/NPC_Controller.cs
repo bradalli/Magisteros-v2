@@ -2,6 +2,7 @@ using Brad.FSM;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Brad.Character
@@ -10,6 +11,7 @@ namespace Brad.Character
     {
         #region Public Variables
         //Event and data handler
+        public SO_C_Attributes attributes;
         IEventAndDataHandler handler;
         [HideInInspector]
         public Dictionary<string, object> data;
@@ -33,6 +35,8 @@ namespace Brad.Character
         #endregion
 
         #region States
+        Dictionary<string, BaseState> stateInstanceDictionary;
+
         [HideInInspector]
         public S_Spawn spawnState;
         [HideInInspector]
@@ -67,6 +71,7 @@ namespace Brad.Character
         {
             // NPC
             #region State initialisation
+
             spawnState = new S_Spawn(this);
             despawnState = new S_Despawn(this);
             idleState = new S_Idle(this);
@@ -86,8 +91,11 @@ namespace Brad.Character
             #endregion
 
             #region Event initialisation
-            handler.AddEvent("Enable", EnableNPC);
-            handler.AddEvent("Disable", DisableNPC);
+
+            handler.AddEvent("Next_State", NextState);
+            handler.AddEvent("Enable_C", EnableNPC);
+            handler.AddEvent("Disable_C", DisableNPC);
+
             #endregion
         }
 
@@ -107,7 +115,7 @@ namespace Brad.Character
                 }
             }
         }
-        public void DisableNPC()
+        void DisableNPC()
         {
             foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
             {
@@ -116,6 +124,28 @@ namespace Brad.Character
                     comp.enabled = false;
                 }
             }
+        }
+
+        void NextState()
+        {
+            string nextStateName = handler.GetValue<string>("S_NextState");
+
+            BaseState nextState = null;
+
+            foreach(SO_C_Attributes.State state in attributes.states)
+            {
+                if (state.name == nextStateName)
+                {
+                    nextState = state.stateClass;
+                    break;
+                }   
+            }
+
+            if (nextState != null)
+                ChangeState(nextState);
+
+            else
+                Debug.LogError("Character is attempting to switch to a non-existent state");
         }
 
         #endregion

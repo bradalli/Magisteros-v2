@@ -11,10 +11,10 @@ namespace Brad.Character
         #region Private variables
         IEventAndDataHandler _handler;
 
-        [Tooltip("How many threats needed to make this npc flee (If set to 0, the npc will never enter combat).")]
-        [SerializeField] int maxFearLevel = 5;
-        [Tooltip("The distance at which this npc will disable itself.")]
-        [SerializeField] float maxDistToPlayer = 50;
+        // How many threats needed to make this npc flee (If set to 0, the npc will never enter combat).
+        int maxFearLevel = 5;
+        // The distance at which this npc will disable itself.
+        float maxDistToPlayer = 50;
 
         #endregion
 
@@ -24,12 +24,23 @@ namespace Brad.Character
         {
             if (TryGetComponent(out _handler))
             {
-                _handler.AddEvent("Refresh_ClosestThreatInProxT", Refresh_ClosestThreatInProxT);
-                _handler.AddEvent("Refresh_ClosestThreatInViewT", Refresh_ClosestThreatInViewT);
-                _handler.AddEvent("Refresh_ProxContainsThreatB", Refresh_ProxContainsThreatB);
-                _handler.AddEvent("Refresh_ViewContainsThreatB", Refresh_ViewContainsThreatB);
-                _handler.AddEvent("Refresh_InRangeToPlayerB", Refresh_InRangeOfPlayerB);
-                _handler.AddEvent("Refresh_IsFearfulB", Refresh_IsFearfulB);
+                #region Data initialisation "SET"
+
+                _handler.AddEvent("Set_T_ClosestThreatInProx", Set_ClosestThreatInProx);
+                _handler.AddEvent("Set_T_ClosestThreatInView", Set_ClosestThreatInView);
+                _handler.AddEvent("Set_B_ProxContainsThreat", Set_ProxContainsThreat);
+                _handler.AddEvent("Set_B_ViewContainsThreat", Set_ViewContainsThreat);
+                _handler.AddEvent("Set_B_InRangeOfPlayer", Set_InRangeOfPlayer);
+                _handler.AddEvent("Set_B_IsFearful", Set_IsFearful);
+
+                #endregion
+
+                #region Data initialisation "GET"
+
+                _handler.AddEvent("Get_I_MaxFearLevel", Get_MaxFearLevel);
+                _handler.AddEvent("Get_F_MaxDistToPlayer", Get_MaxDistToPlayer);
+
+                #endregion
             }
 
             else
@@ -48,18 +59,25 @@ namespace Brad.Character
 
         #region Custom Methods 
 
-        #region Refresh data methods
+        #region Get data methods
 
-        void Refresh_ClosestThreatInProxT() => 
-            _handler.SetValue("ClosestThreatInProxT", ClosestTypeInList(targetType.Threat, targetsInProximity));
-        void Refresh_ClosestThreatInViewT() => 
-            _handler.SetValue("ClosestThreatInViewT", ClosestTypeInList(targetType.Threat, targetsInView));
-        void Refresh_ProxContainsThreatB() => _handler.SetValue("ProxContainsThreatB", 
+        void Set_ClosestThreatInProx() => 
+            _handler.SetValue("T_ClosestThreatInProx", ClosestTypeInList(targetType.Threat, targetsInProximity));
+        void Set_ClosestThreatInView() => 
+            _handler.SetValue("T_ClosestThreatInView", ClosestTypeInList(targetType.Threat, targetsInView));
+        void Set_ProxContainsThreat() => _handler.SetValue("B_ProxContainsThreat", 
             NumberOfTypeInList(targetType.Threat, targetsInProximity) > 0);
-        void Refresh_ViewContainsThreatB() => _handler.SetValue("ViewContainsThreatB",
+        void Set_ViewContainsThreat() => _handler.SetValue("B_ViewContainsThreat",
             NumberOfTypeInList(targetType.Threat, targetsInView) > 0);
-        void Refresh_InRangeOfPlayerB() => _handler.SetValue("InRangeOfPlayerB", InRangeOfPlayer());
-        void Refresh_IsFearfulB() => _handler.SetValue("IsFearfulB", IsNpcFearful());
+        void Set_InRangeOfPlayer() => _handler.SetValue("B_InRangeOfPlayer", InRangeOfPlayer());
+        void Set_IsFearful() => _handler.SetValue("B_IsFearful", IsNpcFearful());
+
+        #endregion
+
+        #region Set data methods
+
+        void Get_MaxFearLevel() => _handler.GetValue<int>("I_MaxFearLevel");
+        void Get_MaxDistToPlayer() => _handler.GetValue<float>("F_MaxDistToPlayer");
 
         #endregion
         public enum targetType { Ally, Threat }
