@@ -10,6 +10,9 @@ public interface IEventAndDataHandler
 
     public void SetValue<T>(string key, T value)
     {
+        if (eventDictionary.ContainsKey("Get_" + key))
+            TriggerEvent("Get_" + key);
+
         if (dataDictionary.ContainsKey(key))
             dataDictionary[key] = value;
 
@@ -18,8 +21,14 @@ public interface IEventAndDataHandler
     }
     public T GetValue<T>(string key)
     {
+        if (eventDictionary.ContainsKey("Set_" + key))
+            TriggerEvent("Set_" + key);
+
         if (dataDictionary.ContainsKey(key))
             return (T)dataDictionary[key];
+
+        else
+            Debug.LogError("Key doesn't exist in data dictionary.");
 
         return default(T); // Return default value if key doesn't exist.
     }

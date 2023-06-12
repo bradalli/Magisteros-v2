@@ -21,6 +21,7 @@ public class C_Move : MonoBehaviour
     private Vector3 lookAtDir = Vector3.forward;
     private Vector3 targetLookDir;
     private Transform lookTargetT;
+    private Vector3 lookPos;
     #endregion
 
     #region MonoBehaviour
@@ -40,6 +41,7 @@ public class C_Move : MonoBehaviour
             _handler.AddEvent("Get_T_Mesh", Get_Mesh);
             _handler.AddEvent("Get_V_Destination", Get_Destination);
             _handler.AddEvent("Get_T_LookTarget", Get_LookTarget);
+            _handler.AddEvent("Get_V_LookPosition", Get_LookPosition);
 
             // Update data initialisation SET
             _handler.AddEvent("Set_B_DestinationReach", Set_DestinationReach);
@@ -50,8 +52,8 @@ public class C_Move : MonoBehaviour
             _handler.AddEvent("Start_Move", Start_Move);
             _handler.AddEvent("Stop_Move", Stop_Move);
             _handler.AddEvent("GoToWp", GotoWp);
-            _handler.AddEvent("Start_LookAtTarget", Start_LookAtTarget);
-            _handler.AddEvent("Stop_LookAtTarget", Stop_LookAtTarget);
+            _handler.AddEvent("Start_LookAt", Start_LookAt);
+            _handler.AddEvent("Stop_LookAt", Stop_LookAt);
         }
 
         else
@@ -74,6 +76,7 @@ public class C_Move : MonoBehaviour
     void Get_Mesh() => mesh = _handler.GetValue<Transform>("T_Mesh");
     void Get_Destination() => navAgent.destination = _handler.GetValue<Vector3>("V_Destination");
     void Get_LookTarget() => lookTargetT = _handler.GetValue<Transform>("T_LookTarget");
+    void Get_LookPosition() => lookPos = _handler.GetValue<Vector3>("V_LookPosition");
 
     void Set_CurrWp() => _handler.SetValue("W_CurrWp", currentWaypoint);
     void Set_DestinationReach() => _handler.SetValue("B_DestinationReach",
@@ -94,8 +97,8 @@ public class C_Move : MonoBehaviour
         else
             Debug.LogError("Unable to go to CurrWp because it is null.");
     }
-    void Start_LookAtTarget() => lookAtTargetB = true;
-    void Stop_LookAtTarget() => lookAtTargetB = false;
+    void Start_LookAt() => lookAtTargetB = true;
+    void Stop_LookAt() => lookAtTargetB = false;
 
     #endregion
 

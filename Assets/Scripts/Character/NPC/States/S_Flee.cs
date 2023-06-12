@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class S_Flee : BaseState
 {
-    private NPC_Controller _cont;
+    private StateMachine _cont;
+    private IEventAndDataHandler _handler;
     private Vector3 fleeDirection;
     public S_Flee(NPC_Controller stateMachine) : base("Flee", stateMachine)
     {
@@ -15,45 +16,46 @@ public class S_Flee : BaseState
 
     public override void Enter()
     {
+        _cont.TryGetComponent<IEventAndDataHandler>(out _handler);
         base.Enter();
-        // Work out the average position of all the threats in proximity
-        
 
         // Work out target flee direction
         fleeDirection = (_cont.transform.position - AverageThreatPosition()).normalized;
+        _handler.TriggerEvent("Start_Move");
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
-            _cont.ChangeState(_cont.despawnState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
         // -> Idle
-        if (_cont.Get_ThreatsInProxNum() == 0)
+        if (!_handler.GetValue<bool>("B_ProxContainsThreat"))
         {
-            _cont.ChangeState(_cont.idleState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
 
         // -> Combat
-        if (!_cont.Get_IsFearOverMax())
+        if (!_handler.GetValue<bool>("B_IsFearful"))
         {
-            _cont.ChangeState(_cont.combatState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
         #endregion
         fleeDirection = (_cont.transform.position - AverageThreatPosition()).normalized;
-        Vector3 fleePosition = _cont.transform.position + (fleeDirection * _cont.fleeDistance);
-        _cont.Set_NavDestination(fleePosition);
+        Vector3 fleePosition = _cont.transform.position + (fleeDirection * _handler.GetValue<float>("F_FleeDistance"));
+        _handler.SetValue("V_Destination", fleePosition);
     }
 
     public override void Exit()
     {
+        _handler.TriggerEvent("Stop_Move");
         base.Exit();
     }
 

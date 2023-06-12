@@ -34,31 +34,6 @@ namespace Brad.Character
 
         #endregion
 
-        #region States
-        Dictionary<string, BaseState> stateInstanceDictionary;
-
-        [HideInInspector]
-        public S_Spawn spawnState;
-        [HideInInspector]
-        public S_Despawn despawnState;
-        [HideInInspector]
-        public S_Idle idleState;
-        [HideInInspector]
-        public S_Perform performState;
-        [HideInInspector]
-        public S_Move moveState;
-        [HideInInspector]
-        public S_Alert alertState;
-        [HideInInspector]
-        public S_Search searchState;
-        [HideInInspector]
-        public S_Flee fleeState;
-        [HideInInspector]
-        public S_Combat combatState;
-        [HideInInspector]
-        public S_Dead deadState;
-        #endregion
-
         #region Private Variables
 
         // Components
@@ -74,9 +49,9 @@ namespace Brad.Character
 
             foreach(SO_C_Attributes.State state in attributes.states)
             {
-                stateInstanceDictionary.Add(state.name, state.stateClass);
+                handler.SetValue($"State_{state.name}", state.stateClass);
             }
-
+            /*
             spawnState = new S_Spawn(this);
             despawnState = new S_Despawn(this);
             idleState = new S_Idle(this);
@@ -86,7 +61,7 @@ namespace Brad.Character
             searchState = new S_Search(this);
             fleeState = new S_Flee(this);
             combatState = new S_Combat(this);
-            deadState = new S_Dead(this);
+            deadState = new S_Dead(this);*/
             #endregion
 
             handler = GetComponent<IEventAndDataHandler>();
@@ -97,7 +72,7 @@ namespace Brad.Character
 
             #region Event initialisation
 
-            handler.AddEvent("Next_State", NextState);
+            //handler.AddEvent("Next_State", NextState);
             handler.AddEvent("Enable_C", EnableNPC);
             handler.AddEvent("Disable_C", DisableNPC);
 
@@ -131,28 +106,6 @@ namespace Brad.Character
             }
         }
 
-        void NextState()
-        {
-            string nextStateName = handler.GetValue<string>("S_NextState");
-
-            BaseState nextState = null;
-
-            foreach(SO_C_Attributes.State state in attributes.states)
-            {
-                if (state.name == nextStateName)
-                {
-                    nextState = state.stateClass;
-                    break;
-                }   
-            }
-
-            if (nextState != null)
-                ChangeState(nextState);
-
-            else
-                Debug.LogError("Character is attempting to switch to a non-existent state");
-        }
-
         #endregion
 
         #endregion
@@ -160,7 +113,7 @@ namespace Brad.Character
         #region FSM Methods
         protected override BaseState GetInitialState()
         {
-            return spawnState;
+            return handler.GetValue<BaseState>("State_Spawn");
         }
         #endregion
     }

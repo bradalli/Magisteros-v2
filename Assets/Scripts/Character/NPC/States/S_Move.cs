@@ -7,9 +7,9 @@ using UnityEngine;
 public class S_Move : BaseState
 {
     private IEventAndDataHandler _handler;
-    private NPC_Controller _cont;
+    private StateMachine _cont;
     private Waypoint _wayp;
-    public S_Move(NPC_Controller stateMachine) : base("Move", stateMachine)
+    public S_Move(StateMachine stateMachine) : base("Move", stateMachine)
     {
         _cont = stateMachine;
     }
@@ -17,13 +17,12 @@ public class S_Move : BaseState
     public override void Enter()
     {
         base.Enter();
-        _handler.TriggerEvent("Refresh_CurrWp");
-        _wayp = _handler.GetValue<Waypoint>("CurrWp");
+        _wayp = _handler.GetValue<Waypoint>("W_CurrWp");
 
         if (_wayp.transform.position != Vector3.zero)
         {
-            _handler.SetValue("DestinationV", _wayp.transform.position);
-            _handler.TriggerEvent("Refresh_DestinationV");
+            _handler.SetValue("V_Destination", _wayp.transform.position);
+            _handler.TriggerEvent("Get_V_Destination");
             _handler.TriggerEvent("Start_Move");
         }
             
@@ -33,18 +32,16 @@ public class S_Move : BaseState
     {
         #region Transitions
         // -> Despawn
-        _handler.TriggerEvent("Refresh_InRangeToPlayerB");
-        if (!_handler.GetValue<bool>("InRangeToPlayerB"))
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
-            _cont.ChangeState(_cont.despawnState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
         // -> Alert
-        _handler.TriggerEvent("Refresh_ProxContainsThreatB");
-        if (_handler.GetValue<bool>("ProxContainsThreatB"))
+        if (_handler.GetValue<bool>("B_ProxContainsThreat"))
         {
-            _cont.ChangeState(_cont.alertState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Alert"));
             return;
         }
 
@@ -56,20 +53,18 @@ public class S_Move : BaseState
         }*/
 
         // -> Idle
-        _handler.TriggerEvent("Refresh_CurrWp");
-        if (_handler.GetValue<Waypoint>("CurrWp") != null)
+        if (_handler.GetValue<Waypoint>("W_CurrWp") == null)
         {
-            _cont.ChangeState(_cont.idleState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
         #endregion
 
-        _handler.TriggerEvent("Refresh_DestinationReachB");
-        if (_handler.GetValue<bool>("DestinationReachB"))
+        if (_handler.GetValue<bool>("B_DestinationReach"))
         {
             if(_wayp.nextWp != null)
             {
-                _cont.Set_CurrentWaypoint(_wayp.nextWp);
+                _handler.SetValue("W_CurrWp", _wayp.nextWp);
                 _wayp = _wayp.nextWp;
             }
         }
@@ -78,6 +73,6 @@ public class S_Move : BaseState
     public override void Exit()
     {
         base.Exit();
-        _cont.Set_NavDestination(_cont.transform.position);
+        _handler.TriggerEvent("Stop_Move");
     }
 }

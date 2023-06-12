@@ -16,7 +16,7 @@ public class S_Spawn : BaseState
 
     #region State methods
 
-    public S_Spawn(NPC_Controller stateMachine) : base("Spawn", stateMachine)
+    public S_Spawn(StateMachine stateMachine) : base("Spawn", stateMachine)
     {
         fsMachine = stateMachine;
         fsMachine.TryGetComponent(out _dmg);
@@ -43,7 +43,7 @@ public class S_Spawn : BaseState
                 _dmg.ResetHealth();
             }
 
-            fsMachine.ChangeState(_handler.GetValue<BaseState>());
+            fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
         }
     }
 

@@ -6,10 +6,12 @@ using UnityEngine;
 
 public class S_Alert : BaseState
 {
-    private NPC_Controller _cont;
+    private StateMachine _cont;
+    private IEventAndDataHandler _handler;
     bool _damageReceived;
 
-    Collider _target;
+    Transform _target;
+    Transform _mesh;
 
     Vector3 lastLookDirection;
     Vector3 lookDirection = Vector3.forward;
@@ -21,23 +23,21 @@ public class S_Alert : BaseState
 
     float lookAtPosLength;
     float lastLookTime;
-    public S_Alert(NPC_Controller stateMachine) : base("Alert", stateMachine)
+    public S_Alert(StateMachine stateMachine) : base("Alert", stateMachine)
     {
         _cont = stateMachine;
     }
 
     public override void Enter()
     {
-        _cont.Set_AnimBool("InCombat", true);
-        _cont.Set_NavDestination(_cont.transform.position);
+        _handler.TriggerEvent("Start_Combat");
+        _handler.TriggerEvent("Stop_Move");
 
         lookAtPosLength = alertTimeLength / lookAroundNum;
 
         lastLookDirection = lookDirection;
         enterTime = Time.time;
         lastLookTime = Time.time - lookAtPosLength;
-
-        //_target = _cont.Get_ClosestThreatInProx();
 
         base.Enter();
     }
@@ -49,39 +49,40 @@ public class S_Alert : BaseState
 
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
-            _cont.ChangeState(_cont.despawnState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
         // -> Idle
-        if(timePassedAlert > alertTimeLength && _cont.Get_ThreatsInProxNum() == 0)
+        if(timePassedAlert > alertTimeLength && !_handler.GetValue<bool>("B_ProxContainsThreat"))
         {
-            _cont.ChangeState(_cont.idleState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
 
         // -> Combat
-        if(_cont.Get_ThreatsInViewNum() > 0)
+        if(_handler.GetValue<bool>("B_ViewContainsThreat"))
         {
-            _cont.ChangeState(_cont.combatState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Combat"));
             return;
         }
 
         // -> Search
-        if(timePassedAlert > alertTimeLength && _cont.Get_ThreatsInProxNum() > 0)
+        if(timePassedAlert > alertTimeLength && _handler.GetValue<bool>("B_ProxContainsThreat"))
         {
-            _cont.ChangeState(_cont.searchState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Search"));
             return;
         }
         #endregion
 
         // Change target if closest threat has changed.
-        if (_cont.Get_ClosestThreatInView() != null)
+        Transform tmpTarget = _handler.GetValue<Transform>("T_ClosestThreatInView");
+        if (tmpTarget != null)
         {
-            if (_cont.Get_ClosestThreatInView() != _target)
-                _target = _cont.Get_ClosestThreatInView();
+            if (tmpTarget != _target)
+                _target = tmpTarget;
         }
 
         if (_target != null)
@@ -96,20 +97,20 @@ public class S_Alert : BaseState
                 if (Vector3.Distance(lastLookDirection, lookDirection) < 0.5f)
                     lookDirection *= -1;
 
-                lookDirection += _cont.meshT.position;
+                lookDirection += _cont.transform.position;
                 lastLookTime = Time.time;
             }
-                
 
-            if(lookDirection != lastLookDirection)
-                _cont.Set_LookAtPosition(lookDirection);
+
+            if (lookDirection != lastLookDirection)
+                _handler.SetValue("V_LookPosition", lookDirection);
         }
     }
 
     public override void Exit()
     {
-        _cont.Set_AnimBool("InCombat", false);
-        _cont.Set_LookAtPosition(Vector3.zero);
+        _handler.TriggerEvent("Stop_Combat");
+        _handler.TriggerEvent("Stop_LookAt");
         base.Exit();
     }
 }

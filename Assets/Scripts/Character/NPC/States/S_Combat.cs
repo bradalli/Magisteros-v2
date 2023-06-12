@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class S_Combat : BaseState
 {
-    NPC_Controller fsMachine;
+    StateMachine fsMachine;
     private IEventAndDataHandler _handler;
     IDamagable myDmg, targetDmg;
     Transform target;
@@ -18,7 +18,7 @@ public class S_Combat : BaseState
     float lastAttackTime;
     float startTargetLost;
 
-    public S_Combat(NPC_Controller stateMachine) : base("Combat", stateMachine)
+    public S_Combat(StateMachine stateMachine) : base("Combat", stateMachine)
     {
         fsMachine = stateMachine;
     }

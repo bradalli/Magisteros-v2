@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class S_Despawn : BaseState
 {
-    private NPC_Controller _cont;
+    private StateMachine _cont;
+    IEventAndDataHandler _handler;
     public S_Despawn(NPC_Controller stateMachine) : base("Spawn", stateMachine)
     {
         _cont = stateMachine;
@@ -15,13 +16,14 @@ public class S_Despawn : BaseState
     #region State methods
     public override void Enter()
     {
+        _cont.TryGetComponent<IEventAndDataHandler>(out _handler);
         base.Enter();
-        _cont.EnableNPC(false);
+        _handler.TriggerEvent("Disable_C");
     }
 
     public override void UpdateState()
     {
-        _cont.ChangeState(_cont.spawnState);
+        _cont.ChangeState(_handler.GetValue<BaseState>("State_Spawn"));
     }
 
     public override void Exit()

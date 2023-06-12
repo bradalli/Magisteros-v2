@@ -59,7 +59,7 @@ namespace Brad.Character
 
         #region Custom Methods 
 
-        #region Get data methods
+        #region Set data methods
 
         void Set_ClosestThreatInProx() => 
             _handler.SetValue("T_ClosestThreatInProx", ClosestTypeInList(targetType.Threat, targetsInProximity));
@@ -74,7 +74,7 @@ namespace Brad.Character
 
         #endregion
 
-        #region Set data methods
+        #region Get data methods
 
         void Get_MaxFearLevel() => _handler.GetValue<int>("I_MaxFearLevel");
         void Get_MaxDistToPlayer() => _handler.GetValue<float>("F_MaxDistToPlayer");

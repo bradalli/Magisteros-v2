@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 public class S_Search : BaseState
 {
-    private NPC_Controller _cont;
+    private StateMachine _cont;
     private IEventAndDataHandler _handler;
 
     Vector3 startPosition;
@@ -19,7 +19,7 @@ public class S_Search : BaseState
 
     int sampleAttempts = 0;
 
-    public S_Search(NPC_Controller stateMachine) : base("Search", stateMachine)
+    public S_Search(StateMachine stateMachine) : base("Search", stateMachine)
     {
         _cont = stateMachine;
     }
@@ -48,29 +48,27 @@ public class S_Search : BaseState
         _handler.TriggerEvent("Refresh_InRangeToPlayerB");
         if (!_handler.GetValue<bool>("InRangeToPlayerB"))
         {
-            _cont.ChangeState(_cont.despawnState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
         // -> Idle
         if (timePassed > searchTimeLength)
         {
-            _cont.ChangeState(_cont.idleState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
 
         // -> Combat
-        _handler.TriggerEvent("Refresh_ViewContainsThreatB");
-        if (_handler.GetValue<bool>("ViewContainsThreatB"))
+        if (_handler.GetValue<bool>("B_ViewContainsThreat"))
         {
-            _cont.ChangeState(_cont.combatState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Combat"));
             return;
         }
         #endregion
 
         //Debug.Log(_cont.Get_RemainingNavDistance());
-        _handler.TriggerEvent("Refresh_DestinationReachB");
-        if(_handler.GetValue<bool>("DestinationReachB"))
+        if(_handler.GetValue<bool>("B_ViewContainsThreat"))
         {
             // Find a random position within the searchRange and sample it from the nav mesh.
             Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
@@ -107,7 +105,6 @@ public class S_Search : BaseState
                 Debug.LogError("NavMesh sample attempts limit reached");
         }*/
         //_cont.Set_NavDestination(desiredPosition);
-        _handler.SetValue("DestinationV", desiredPosition);
-        _handler.TriggerEvent("Refresh_DestinationV");
+        _handler.SetValue("V_Destination", desiredPosition);
     }
 }

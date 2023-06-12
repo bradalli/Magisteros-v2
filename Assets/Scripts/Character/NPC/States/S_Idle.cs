@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class S_Idle : BaseState
 {
-    private NPC_Controller _cont;
+    private StateMachine _cont;
+    private IEventAndDataHandler _handler;
     public S_Idle(NPC_Controller stateMachine) : base("Idle", stateMachine)
     {
         _cont = stateMachine;
@@ -14,39 +15,42 @@ public class S_Idle : BaseState
 
     public override void Enter()
     {
+        _cont.TryGetComponent(out _handler);
         base.Enter();
-        _cont.Set_NavDestination(_cont.transform.position);
-        _cont.Set_LookAtPosition(Vector3.zero);
+
+        _handler.TriggerEvent("Stop_Move");
+        _handler.TriggerEvent("Stop_LookAtTarget");
     }
 
     public override void UpdateState()
     {
         #region Transitions
         // -> Despawn
-        if (_cont.Get_IsNpcOutOfRange())
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
-            _cont.ChangeState(_cont.despawnState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
         // -> Alert
-        if(_cont.Get_ThreatsInProxNum() > 0)
+        if(_handler.GetValue<bool>("B_ProxContainsThreat"))
         {
-            _cont.ChangeState(_cont.alertState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Alert"));
             return;
         } // Need to add function for other allies in proximity to warn this npc.
 
         // -> Perform
+        /* NOT PLANNING ON IMPLEMENTING AT THIS TIME (12.06.2023)
         if(_cont.Get_CurrAction() != null)
         {
             _cont.ChangeState(_cont.performState);
             return;
-        }
+        }*/
 
         // -> Move
-        if (_cont.Get_CurrWaypoint() != null)
+        if (_handler.GetValue<Waypoint>("W_CurrWp") != null)
         {
-            _cont.ChangeState(_cont.moveState);
+            _cont.ChangeState(_handler.GetValue<BaseState>("State_Move"));
             return;
         }
 
