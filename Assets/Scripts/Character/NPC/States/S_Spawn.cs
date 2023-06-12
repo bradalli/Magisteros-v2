@@ -8,7 +8,7 @@ public class S_Spawn : BaseState
 {
     #region Private variables
 
-    private NPC_Controller fsMachine;
+    private StateMachine fsMachine;
     private IEventAndDataHandler _handler;
     private IDamagable _dmg;
 
@@ -24,26 +24,26 @@ public class S_Spawn : BaseState
     public override void Enter()
     {
         base.Enter();
-        _handler.TriggerEvent("Disable");
-        _handler.TriggerEvent("Trigger_AnimRespawn");
+        _handler.TriggerEvent("Disable_C");
+        _handler.TriggerEvent("Respawn");
     }
 
     public override void UpdateState()
     {
         // Refresh value in case it has changed
-        _handler.TriggerEvent("Refresh_InRangeOfPlayerB");
+        _handler.TriggerEvent("Get_B_InRangeOfPlayer");
         
         // Retrieve value from handler and only advance if npc is within range of player
-        if (!_handler.GetValue<bool>("InRangeOfPlayerB"))
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
-            _handler.TriggerEvent("Enable");
+            _handler.TriggerEvent("Enable_C");
             
             if (_dmg != null)
             {
                 _dmg.ResetHealth();
             }
 
-            fsMachine.ChangeState(fsMachine.idleState);
+            fsMachine.ChangeState(_handler.GetValue<BaseState>());
         }
     }
 

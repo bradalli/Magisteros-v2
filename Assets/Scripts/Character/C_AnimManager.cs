@@ -25,24 +25,11 @@ public class C_AnimManager : MonoBehaviour
         if (_handler != null)
         {
             // Refresh data initialisation
-            _handler.AddEvent("Refresh_BaseAnimState", Refresh_BaseAnimState);
+            _handler.AddEvent("Set_AS_CurrAnimState", Set_CurrAnimState);
 
             // Event initialisation
-            _handler.AddEvent("Trigger_AnimAttack", Trigger_AnimAttack);
-            _handler.AddEvent("Trigger_AnimRespawn", Trigger_AnimRespawn);
-        }
-    }
-
-    private void OnDisable()
-    {
-        // Only continue if component(s) are found
-        if (_handler != null)
-        {
-            // Refresh data removal
-            _handler.RemoveEvent("Refresh_BaseAnimState", Refresh_BaseAnimState);
-
-            // Event removal
-            _handler.RemoveEvent("Do_AttackSwing", Trigger_AnimAttack);
+            _handler.AddEvent("AttackHit", Trigger_AnimAttack);
+            _handler.AddEvent("Respawn", Trigger_AnimRespawn);
         }
     }
 
@@ -64,14 +51,14 @@ public class C_AnimManager : MonoBehaviour
 
     #region Refresh data methods
 
-    void Refresh_BaseAnimState() => _handler.SetValue("CurrAnimState", anim.GetCurrentAnimatorStateInfo(0));
+    void Set_CurrAnimState() => _handler.SetValue("AS_CurrAnimState", anim.GetCurrentAnimatorStateInfo(0));
 
     #endregion
 
     #region Event methods
 
-    void Trigger_AnimAttack() => anim.SetTrigger("tAttack");
-    void Trigger_AnimRespawn() => anim.SetTrigger("tRespawn");
+    void Trigger_AnimAttack() => anim.SetTrigger("Attack");
+    void Trigger_AnimRespawn() => anim.SetTrigger("Respawn");
 
     #endregion
 

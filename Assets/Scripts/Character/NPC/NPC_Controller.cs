@@ -72,6 +72,11 @@ namespace Brad.Character
             // NPC
             #region State initialisation
 
+            foreach(SO_C_Attributes.State state in attributes.states)
+            {
+                stateInstanceDictionary.Add(state.name, state.stateClass);
+            }
+
             spawnState = new S_Spawn(this);
             despawnState = new S_Despawn(this);
             idleState = new S_Idle(this);

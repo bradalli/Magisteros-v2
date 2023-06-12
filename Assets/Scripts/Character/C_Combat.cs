@@ -10,7 +10,7 @@ public class C_Combat : MonoBehaviour
 
     IEventAndDataHandler _handler;
     
-    [SerializeField] int damage = 5;
+    int damage = 5;
 
     Transform meshT;
 
@@ -26,26 +26,12 @@ public class C_Combat : MonoBehaviour
         // Only continue if component(s) are found
         if (_handler != null)
         {
-            // Refresh data initialisation
-            _handler.AddEvent("Refresh_DamageI", Refresh_DamageI);
-            _handler.AddEvent("Refresh_MeshT", Refresh_MeshT);
+            // Refresh data initialisation GET
+            _handler.AddEvent("Get_I_Damage", Get_Damage);
+            _handler.AddEvent("Get_T_Mesh", Get_Mesh);
 
             // Event initialisation
-            _handler.AddEvent("Do_AttackSwing", Do_AttackCast);
-        }
-    }
-
-    private void OnDisable()
-    {
-        // Only continue if component(s) are found
-        if (_handler != null)
-        {
-            // Refresh data removal
-            _handler.RemoveEvent("Refresh_DamageI", Refresh_DamageI);
-            _handler.RemoveEvent("Refresh_MeshT", Refresh_MeshT);
-
-            // Event removal
-            _handler.RemoveEvent("Do_AttackSwing", Do_AttackCast);
+            _handler.AddEvent("AttackHit", AttackCast);
         }
     }
 
@@ -64,14 +50,14 @@ public class C_Combat : MonoBehaviour
 
     #region Refresh data methods
 
-    void Refresh_DamageI() => damage = _handler.GetValue<int>("DamageI");
-    void Refresh_MeshT() => meshT = _handler.GetValue<Transform>("MeshT");
+    void Get_Damage() => damage = _handler.GetValue<int>("I_Damage");
+    void Get_Mesh() => meshT = _handler.GetValue<Transform>("T_Mesh");
 
     #endregion
 
     #region Event methods
 
-    void Do_AttackCast()
+    void AttackCast()
     {
         // Create a list of targets that are found within an overlap sphere
         List<Collider> hitColliders = 

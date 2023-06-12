@@ -9,6 +9,7 @@ public class C_Move : MonoBehaviour
 {
     #region Private variables
     float lookSpeed = 5f;
+    float moveSpeed;
 
     private IEventAndDataHandler _handler;
     private NavMeshAgent navAgent;
@@ -33,46 +34,24 @@ public class C_Move : MonoBehaviour
         // Only continue if components are found
         if (_handler != null && navAgent != null)
         {
-            // Update data initialisation
-            _handler.AddEvent("Refresh_LookSpeedF", Refresh_LookSpeedF);
-            _handler.AddEvent("Refresh_MeshT", Refresh_MeshT);
-            _handler.AddEvent("Refresh_DestinationReachB", Refresh_DestinationReachB);
-            _handler.AddEvent("Refresh_VelocityV", Refresh_VelocityV);
-            _handler.AddEvent("Refresh_Destination", Refresh_Destination);
-            _handler.AddEvent("Refresh_LookTargetT", Refresh_LookTargetT);
-            _handler.AddEvent("Refresh_CurrWp", Refresh_CurrWp);
+            // Update data initialisation GET
+            _handler.AddEvent("Get_F_LookSpeed", Get_LookSpeed);
+            _handler.AddEvent("Get_F_MoveSpeed", Get_MoveSpeed);
+            _handler.AddEvent("Get_T_Mesh", Get_Mesh);
+            _handler.AddEvent("Get_V_Destination", Get_Destination);
+            _handler.AddEvent("Get_T_LookTarget", Get_LookTarget);
+
+            // Update data initialisation SET
+            _handler.AddEvent("Set_B_DestinationReach", Set_DestinationReach);
+            _handler.AddEvent("Set_V_Velocity", Set_Velocity);
+            _handler.AddEvent("Set_W_CurrWp", Set_CurrWp);
 
             // Event initialisation
             _handler.AddEvent("Start_Move", Start_Move);
             _handler.AddEvent("Stop_Move", Stop_Move);
-            _handler.AddEvent("Do_GoToWp", Do_GotoWp);
+            _handler.AddEvent("GoToWp", GotoWp);
             _handler.AddEvent("Start_LookAtTarget", Start_LookAtTarget);
             _handler.AddEvent("Stop_LookAtTarget", Stop_LookAtTarget);
-        }
-
-        else
-            Debug.LogError(_handler.GetType().ToString() + " could not be found");
-    }
-    private void OnDisable()
-    {
-        // Only continue if components are found
-        if (_handler != null && navAgent != null)
-        {
-            // Update data removal
-            _handler.RemoveEvent("Refresh_LookSpeedF", Refresh_LookSpeedF);
-            _handler.RemoveEvent("Refresh_MeshT", Refresh_MeshT);
-            _handler.RemoveEvent("Refresh_NavAgentInfo", Refresh_DestinationReachB);
-            _handler.RemoveEvent("Refresh_NavAgentVel", Refresh_VelocityV);
-            _handler.RemoveEvent("Refresh_NavAgentDestination", Refresh_Destination);
-            _handler.RemoveEvent("Refresh_LookTargetT", Refresh_LookTargetT);
-            _handler.RemoveEvent("Update_CurrWp", Refresh_CurrWp);
-
-            // Event removal
-            _handler.RemoveEvent("Start_Move", Start_Move);
-            _handler.RemoveEvent("Stop_Move", Stop_Move);
-            _handler.RemoveEvent("Do_GoToWp", Do_GotoWp);
-            _handler.RemoveEvent("Start_LookAtTarget", Start_LookAtTarget);
-            _handler.RemoveEvent("Stop_LookAtTarget", Stop_LookAtTarget);
         }
 
         else
@@ -90,14 +69,16 @@ public class C_Move : MonoBehaviour
 
     #region Refresh data methods
 
-    void Refresh_LookSpeedF() => lookSpeed = _handler.GetValue<float>("LookSpeedF");
-    void Refresh_MeshT() => mesh = _handler.GetValue<Transform>("MeshT");
-    void Refresh_CurrWp() => _handler.SetValue("CurrWp", currentWaypoint);
-    void Refresh_DestinationReachB() =>_handler.SetValue("DestinationReachB", 
+    void Get_LookSpeed() => lookSpeed = _handler.GetValue<float>("F_LookSpeed");
+    void Get_MoveSpeed() => moveSpeed = _handler.GetValue<float>("F_MoveSpeed");
+    void Get_Mesh() => mesh = _handler.GetValue<Transform>("T_Mesh");
+    void Get_Destination() => navAgent.destination = _handler.GetValue<Vector3>("V_Destination");
+    void Get_LookTarget() => lookTargetT = _handler.GetValue<Transform>("T_LookTarget");
+
+    void Set_CurrWp() => _handler.SetValue("W_CurrWp", currentWaypoint);
+    void Set_DestinationReach() => _handler.SetValue("B_DestinationReach",
         navAgent.remainingDistance <= navAgent.stoppingDistance);
-    void Refresh_VelocityV() => _handler.SetValue("VelocityV", navAgent.velocity);
-    void Refresh_Destination() => navAgent.destination = _handler.GetValue<Vector3>("DestinationV");
-    void Refresh_LookTargetT() => lookTargetT = _handler.GetValue<Transform>("TargetT");
+    void Set_Velocity() => _handler.SetValue("V_Velocity", navAgent.velocity);
 
     #endregion
 
@@ -105,7 +86,7 @@ public class C_Move : MonoBehaviour
 
     void Start_Move() => navAgent.isStopped = false;
     void Stop_Move() => navAgent.isStopped = true;
-    void Do_GotoWp()
+    void GotoWp()
     {
         if (currentWaypoint != null)
             navAgent.destination = currentWaypoint.transform.position;
