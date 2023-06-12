@@ -10,24 +10,19 @@ public class NPC_AnimEvents : MonoBehaviour
     private void OnEnable()
     {
         transform.parent.TryGetComponent(out _handler);
-
-        if(_handler != null)
-        {
-            _handler.SetValue("IsAttackingB", false);
-        }
     }
 
     public void AttackSwing()
     {
         if (_handler != null)
-            _handler.TriggerEvent("Do_AttackSwing");
+            _handler.TriggerEvent("AttackHit");
     }
 
     public void Set_IsAttackingTrue()
     {
         if (_handler != null)
         {
-            _handler.SetValue("IsAttackingB", true);
+            _handler.TriggerEvent("Start_Attack");
         }
     }
 
@@ -35,7 +30,7 @@ public class NPC_AnimEvents : MonoBehaviour
     {
         if (_handler != null)
         {
-            _handler.SetValue("IsAttackingB", false);
+            _handler.TriggerEvent("Stop_Attack");
         }
     }
 }

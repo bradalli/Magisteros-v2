@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class C_Actor : MonoBehaviour
 {
+    /*
     private NPC_Controller npcCont;
 
     public CharacterAction currentAction;
@@ -47,4 +48,5 @@ public class C_Actor : MonoBehaviour
     {
         return currentAction;
     }
+    */
 }

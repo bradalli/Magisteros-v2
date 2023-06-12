@@ -87,9 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d45bc8d1ca8ae694f8def83a12372ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: NPC
-  meshT: {fileID: 3166754812355574368}
-  fleeDistance: 30
+  attributes: {fileID: 11400000, guid: 504f61119036b084a96ca2b873c3194d, type: 2}
   maxHealth: 100
   health: 0
 --- !u!114 &770270271356491070
@@ -104,16 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 802da974c339a62439cb483dbff65029, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewConeFov: 80
-  viewConeMaxDistance: 15
   targetsInView: []
-  proximityMask:
-    serializedVersion: 2
-    m_Bits: 64
-  proximityRange: 25
   targetsInProximity: []
-  maxFearLevel: 1
-  maxDistToPlayer: 50
 --- !u!114 &6120972396642868539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,9 +140,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47653ac2168deb4489fc2cd5ca27603e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookSpeed: 5
-  currentWaypoint: {fileID: 0}
-  lookAtPosition: {x: 0, y: 0, z: 0}
 --- !u!1001 &6420568092594281253
 PrefabInstance:
   m_ObjectHideFlags: 0

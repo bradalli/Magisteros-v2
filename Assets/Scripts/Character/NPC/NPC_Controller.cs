@@ -18,9 +18,6 @@ namespace Brad.Character
         [HideInInspector]
         public Dictionary<string, Action> events;
 
-        // Attributes
-        public float fleeDistance = 15f; // NPC
-
         // Stats
         public int maxHealth = 100;
         public int health;
@@ -49,7 +46,26 @@ namespace Brad.Character
 
             foreach(SO_C_Attributes.State state in attributes.states)
             {
-                handler.SetValue($"State_{state.name}", state.stateClass);
+                BaseState tmpState = new BaseState(state.stateClass);
+                handler.SetValue($"State_{state.name}", state.stateClass as BaseState);
+            }
+
+            foreach(SO_C_Attributes.Attribute attribute in attributes.attributes)
+            {
+                switch (attribute.type)
+                {
+                    case SO_C_Attributes.Attribute.variableType.Type_Float:
+                        handler.SetValue(attribute.name, float.Parse(attribute.value));
+                        break;
+
+                    case SO_C_Attributes.Attribute.variableType.Type_Int:
+                        handler.SetValue(attribute.name, int.Parse(attribute.value));
+                        break;
+
+                    case SO_C_Attributes.Attribute.variableType.Type_String:
+                        handler.SetValue(attribute.name, attribute.value);
+                        break;
+                }
             }
             /*
             spawnState = new S_Spawn(this);

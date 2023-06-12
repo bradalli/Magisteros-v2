@@ -30,6 +30,7 @@ public class C_AnimManager : MonoBehaviour
             // Event initialisation
             _handler.AddEvent("AttackHit", Trigger_AnimAttack);
             _handler.AddEvent("Respawn", Trigger_AnimRespawn);
+            _handler.AddEvent("Die", Trigger_AnimDead);
         }
     }
 
@@ -58,7 +59,8 @@ public class C_AnimManager : MonoBehaviour
     #region Event methods
 
     void Trigger_AnimAttack() => anim.SetTrigger("Attack");
-    void Trigger_AnimRespawn() => anim.SetTrigger("Respawn");
+    void Trigger_AnimRespawn() => anim.SetBool("Dead", false);
+    void Trigger_AnimDead() => anim.SetBool("Dead", true);
 
     #endregion
 

@@ -33,6 +33,7 @@ public class S_Perform : BaseState
 
     public override void UpdateState()
     {
+        /*
         #region Transitions
         // -> Despawn
         _handler.TriggerEvent("Refresh_InRangeToPlayerB");
@@ -56,7 +57,7 @@ public class S_Perform : BaseState
         {
             _cont.ChangeState(_cont.idleState);
             return;
-        }*/
+        }
         #endregion
 
         if (_action != null)
@@ -66,6 +67,7 @@ public class S_Perform : BaseState
         {
             //_cont.Do_ActionEnd();
         }
+        */
     }
 
     public override void Exit()

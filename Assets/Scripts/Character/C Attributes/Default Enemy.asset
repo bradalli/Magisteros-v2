@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c82163c1687da944a0565aa86397b5a, type: 3}
+  m_Name: Default Enemy
+  m_EditorClassIdentifier: 
+  attributes:
+  - name: I_MaxFearLevel
+    type: 2
+    value: 3
+    description: The maximum number of threats this character can handle.
+  - name: F_FleeDistance
+    type: 1
+    value: 30
+    description: 'The distance the character must reach to successfully flee.  '
+  - name: F_MaxDistToPlayer
+    type: 1
+    value: 30
+    description: 'The maximum distance to the player before this character is disabled.
+
+'
+  - name: I_Damage
+    type: 2
+    value: 5
+    description: 'How much damage this character can deal.
+
+
+'
+  - name: F_LookSpeed
+    type: 1
+    value: 5
+    description: 'The speed at which the character can turn.
+
+
+
+'
+  - name: F_MoveSpeed
+    type: 1
+    value: 5
+    description: 'The speed at which the character can turn.
+
+
+
+'
+  states:
+  - name: Spawn
+    stateClass: {fileID: 11500000, guid: 5c1cbc4fc8897744495f6dd678ff03a5, type: 3}
+  - name: Despawn
+    stateClass: {fileID: 11500000, guid: 697a4fd515a93cc44858bd9d60c7fe61, type: 3}
+  - name: Idle
+    stateClass: {fileID: 11500000, guid: ba3ff9c0b90986e4d96054f4d4ec6d83, type: 3}
+  - name: Move
+    stateClass: {fileID: 11500000, guid: 1556b971ba4ca104893158eb161f5147, type: 3}
+  - name: Alert
+    stateClass: {fileID: 11500000, guid: 5da6aa1713436c7408615b81b2f96d72, type: 3}
+  - name: Search
+    stateClass: {fileID: 11500000, guid: 39ecef60b20072448a2ce666b58f9d98, type: 3}
+  - name: Flee
+    stateClass: {fileID: 11500000, guid: 86d5860d1e61c5f47a757004e8b67eec, type: 3}
+  - name: Combat
+    stateClass: {fileID: 11500000, guid: 038270534e57fd740a54c65edadfcd62, type: 3}
+  - name: Dead
+    stateClass: {fileID: 11500000, guid: 6f1ad8aa861cc2b468d0b5fc482c7c72, type: 3}
+  meshPrefab: {fileID: 876960366201005349, guid: cdbf23cb23f9d094b8bd4994cf1c3942, type: 3}

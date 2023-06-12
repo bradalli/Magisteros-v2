@@ -25,7 +25,7 @@ public class S_Combat : BaseState
 
     public override void Enter()
     {
-        fsMachine.TryGetComponent<IEventAndDataHandler>(out _handler);
+        fsMachine.TryGetComponent(out _handler);
         base.Enter();
 
         fsMachine.transform.TryGetComponent(out myDmg);
