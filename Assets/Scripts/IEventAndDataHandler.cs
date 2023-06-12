@@ -6,26 +6,26 @@ using UnityEngine;
 public interface IEventAndDataHandler
 {
     #region Data handling
-    public Dictionary<string, object> dataDictionary { get; }
+    public Dictionary<string, object> DataDictionary { get; set; }
 
     public void SetValue<T>(string key, T value)
     {
-        if (eventDictionary.ContainsKey("Get_" + key))
+        if (EventDictionary.ContainsKey("Get_" + key))
             TriggerEvent("Get_" + key);
 
-        if (dataDictionary.ContainsKey(key))
-            dataDictionary[key] = value;
+        if (DataDictionary.ContainsKey(key))
+            DataDictionary[key] = value;
 
         else
-            dataDictionary.Add(key, value);
+            DataDictionary.Add(key, value);
     }
     public T GetValue<T>(string key)
     {
-        if (eventDictionary.ContainsKey("Set_" + key))
+        if (EventDictionary.ContainsKey("Set_" + key))
             TriggerEvent("Set_" + key);
 
-        if (dataDictionary.ContainsKey(key))
-            return (T)dataDictionary[key];
+        if (DataDictionary.ContainsKey(key))
+            return (T)DataDictionary[key];
 
         else
             Debug.LogError($"The key ({key}) doesn't exist in data dictionary.");
@@ -35,29 +35,29 @@ public interface IEventAndDataHandler
     #endregion
 
     #region Event handling
-    public Dictionary<string, Action> eventDictionary { get; }
+    public Dictionary<string, Action> EventDictionary { get; set; }
 
     public void AddEvent(string eventName, Action eventAction)
     {
-        if (eventDictionary.ContainsKey(eventName))
-            eventDictionary[eventName] += eventAction;
+        if (EventDictionary.ContainsKey(eventName))
+            EventDictionary[eventName] += eventAction;
 
         else
-            eventDictionary.Add(eventName, eventAction);
+            EventDictionary.Add(eventName, eventAction);
     }
 
     public void RemoveEvent(string eventName, Action eventAction)
     {
-        if (eventDictionary.ContainsKey(eventName))
-            eventDictionary[eventName] -= eventAction;
+        if (EventDictionary.ContainsKey(eventName))
+            EventDictionary[eventName] -= eventAction;
     }
 
     public void TriggerEvent(string eventName)
     {
-        if (eventDictionary.ContainsKey(eventName))
+        if (EventDictionary.ContainsKey(eventName))
         {
-            if (eventDictionary[eventName].GetInvocationList().Length > 0)
-                eventDictionary[eventName]?.Invoke();
+            if (EventDictionary[eventName].GetInvocationList().Length > 0)
+                EventDictionary[eventName]?.Invoke();
 
             else
                 Debug.LogWarning($"The invocation list for '{eventName}' is empty.");

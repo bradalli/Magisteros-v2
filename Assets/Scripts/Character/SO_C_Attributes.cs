@@ -1,7 +1,9 @@
 using Brad.FSM;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 [System.Serializable]
 [CreateAssetMenu(fileName = "Character Attributes", menuName = "Character/Character Attributes", order = 1)]
@@ -26,7 +28,6 @@ public class SO_C_Attributes : ScriptableObject
         public Object stateClass;
     }
 
-    
     public Attribute[] attributes;
     public State[] states;
     public Object meshPrefab;

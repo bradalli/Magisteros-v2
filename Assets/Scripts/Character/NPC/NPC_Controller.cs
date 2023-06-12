@@ -3,7 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using StateMachine = Brad.FSM.StateMachine;
 
 namespace Brad.Character
 {
@@ -11,7 +13,7 @@ namespace Brad.Character
     {
         #region Public Variables
         //Event and data handler
-        public SO_C_Attributes attributes;
+        public SO_C_Attributes so_Attributes;
         IEventAndDataHandler handler;
         [HideInInspector]
         public Dictionary<string, object> data;
@@ -25,8 +27,8 @@ namespace Brad.Character
         #region Interface instance properties
         public int MaxHealth { get => maxHealth; set => maxHealth = value; }
         public int Health { get => health; set => health = value; }
-        public Dictionary<string, object> dataDictionary { get => data; }
-        public Dictionary<string, Action> eventDictionary { get => events; }
+        public Dictionary<string, object> DataDictionary { get => data; set => data = value; }
+        public Dictionary<string, Action> EventDictionary { get => events; set => events = value; }
         #endregion
 
         #endregion
@@ -39,60 +41,53 @@ namespace Brad.Character
 
         #region MonoBehaviour
 
-        private void OnEnable()
+        private void Awake()
         {
+            TryGetComponent(out handler);
+
             // NPC
             #region State initialisation
 
-            foreach(SO_C_Attributes.State state in attributes.states)
+            if(handler != null)
             {
-                BaseState tmpState = new BaseState(state.stateClass);
-                handler.SetValue($"State_{state.name}", state.stateClass as BaseState);
-            }
-
-            foreach(SO_C_Attributes.Attribute attribute in attributes.attributes)
-            {
-                switch (attribute.type)
+                for(int i = 0; i < so_Attributes.attributes.Length; i++)
                 {
-                    case SO_C_Attributes.Attribute.variableType.Type_Float:
-                        handler.SetValue(attribute.name, float.Parse(attribute.value));
-                        break;
+                    SO_C_Attributes.Attribute tmpAttribute = so_Attributes.attributes[i];
+                    switch (tmpAttribute.type)
+                    {
+                        case SO_C_Attributes.Attribute.variableType.Type_Float:
+                            handler.SetValue(tmpAttribute.name, float.Parse(tmpAttribute.value));
+                            break;
 
-                    case SO_C_Attributes.Attribute.variableType.Type_Int:
-                        handler.SetValue(attribute.name, int.Parse(attribute.value));
-                        break;
+                        case SO_C_Attributes.Attribute.variableType.Type_Int:
+                            handler.SetValue(tmpAttribute.name, int.Parse(tmpAttribute.value));
+                            break;
 
-                    case SO_C_Attributes.Attribute.variableType.Type_String:
-                        handler.SetValue(attribute.name, attribute.value);
-                        break;
+                        case SO_C_Attributes.Attribute.variableType.Type_String:
+                            handler.SetValue(tmpAttribute.name, tmpAttribute.value);
+                            break;
+                    }
                 }
+
+                foreach (SO_C_Attributes.State state in so_Attributes.states)
+                {
+                    //handler.SetValue($"State_{state.name}", state.stateClass.GetComponent<BaseState>());
+                }
+                #endregion
+
+                #region Data initialisation
+
+                #endregion
+
+                #region Event initialisation
+
+                //handler.AddEvent("Next_State", NextState);
+                //handler.AddEvent("Enable_C", EnableNPC);
+                //handler.AddEvent("Disable_C", DisableNPC);
+
+                #endregion
             }
-            /*
-            spawnState = new S_Spawn(this);
-            despawnState = new S_Despawn(this);
-            idleState = new S_Idle(this);
-            performState = new S_Perform(this);
-            moveState = new S_Move(this);
-            alertState = new S_Alert(this);
-            searchState = new S_Search(this);
-            fleeState = new S_Flee(this);
-            combatState = new S_Combat(this);
-            deadState = new S_Dead(this);*/
-            #endregion
 
-            handler = GetComponent<IEventAndDataHandler>();
-
-            #region Data initialisation
-
-            #endregion
-
-            #region Event initialisation
-
-            //handler.AddEvent("Next_State", NextState);
-            handler.AddEvent("Enable_C", EnableNPC);
-            handler.AddEvent("Disable_C", DisableNPC);
-
-            #endregion
         }
 
         #endregion

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Brad.FSM
 {
+    [System.Serializable]
     public class BaseState
     {
         public string name;
