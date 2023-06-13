@@ -34,10 +34,10 @@ public class S_Spawn : BaseState
     public override void UpdateState()
     {
         // Refresh value in case it has changed
-        _handler.TriggerEvent("Get_B_InRangeOfPlayer");
+        //_handler.TriggerEvent("Get_B_InRangeOfPlayer");
         
         // Retrieve value from handler and only advance if npc is within range of player
-        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
+        if (_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
             _handler.TriggerEvent("Enable_C");
             

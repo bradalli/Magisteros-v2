@@ -9,14 +9,15 @@ namespace Brad.FSM
     {
         public BaseState currentState;
 
+        /*
         void Start()
         {
             currentState = GetInitialState();
             if (currentState != null)
                 currentState.Enter();
-        }
+        }*/
 
-        void Update()
+        public void Update()
         {
             if (currentState != null)
                 currentState.UpdateState();

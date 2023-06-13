@@ -18,7 +18,7 @@ public class C_Combat : MonoBehaviour
 
     #region MonoBehaviour
 
-    private void OnEnable()
+    private void Start()
     {
         // Cache components
         TryGetComponent(out _handler);

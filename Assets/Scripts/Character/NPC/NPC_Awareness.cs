@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace Brad.Character
 {
@@ -32,7 +33,6 @@ namespace Brad.Character
                 _handler.AddEvent("Set_B_ViewContainsThreat", Set_ViewContainsThreat);
                 _handler.AddEvent("Set_V_ProxThreatsAvgPosition", Set_ProxThreatsAvgPosition);
                 _handler.AddEvent("Set_V_ViewThreatsAvgPosition", Set_ViewThreatsAvgPosition);
-                _handler.AddEvent("Set_B_InRangeOfPlayer", Set_InRangeOfPlayer);
                 _handler.AddEvent("Set_B_IsFearful", Set_IsFearful);
 
                 #endregion
@@ -47,6 +47,11 @@ namespace Brad.Character
 
             else
                 Debug.LogError($"{this.name}... is missing components");
+
+            if (_handler != null)
+            {
+                meshT = _handler.GetValue<Transform>("T_Mesh");
+            }
         }
 
         private new void OnDrawGizmos()
@@ -75,7 +80,6 @@ namespace Brad.Character
             AveragePositionOfTypeInList(targetType.Threat, targetsInProximity));
         void Set_ViewThreatsAvgPosition() => _handler.SetValue("V_ViewThreatsAvgPosition",
             AveragePositionOfTypeInList(targetType.Threat, targetsInView));
-        void Set_InRangeOfPlayer() => _handler.SetValue("B_InRangeOfPlayer", InRangeOfPlayer());
         void Set_IsFearful() => _handler.SetValue("B_IsFearful", IsNpcFearful());
 
         #endregion
@@ -87,11 +91,7 @@ namespace Brad.Character
 
         #endregion
         public enum targetType { Ally, Threat }
-        bool InRangeOfPlayer()
-        {
-            float distToPlayer = Vector3.Distance(transform.position, Player_Controller.Instance.transform.position);
-            return distToPlayer < maxDistToPlayer;
-        }
+        
         bool IsNpcFearful()
         {
             // Determine how many threats outnumber this npc.

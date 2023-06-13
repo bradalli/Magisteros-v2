@@ -12,19 +12,19 @@ namespace Brad.Character
     {
         #region Private variables
 
+        public LayerMask proximityMask;
+
         private float viewConeFov = 60f;
         private float viewConeMaxDistance = 5f;
-        [HideInInspector]
         public List<Collider> targetsInView;
 
-        private LayerMask proximityMask;
         private float proximityRange = 10f;
-        [HideInInspector]
         public List<Collider> targetsInProximity;
 
         IEventAndDataHandler _handler;
         Collider myCollider;
-        Transform meshT;
+        [HideInInspector]
+        public Transform meshT;
 
         #endregion
 
@@ -37,8 +37,7 @@ namespace Brad.Character
 
             if (_handler != null)
             {
-                _handler.TriggerEvent("Refresh_MeshT");
-                meshT = _handler.GetValue<Transform>("MeshT");
+                meshT = _handler.GetValue<Transform>("T_Mesh");
             }
         }
 

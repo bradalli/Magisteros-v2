@@ -6,6 +6,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 using Object = UnityEngine.Object;
 using StateMachine = Brad.FSM.StateMachine;
 
@@ -27,6 +28,11 @@ namespace Brad.Character
         public int maxHealth = 100;
         public int health;
 
+        [Serializable]
+        public struct DictionaryValue { public string key; public string value; }
+        public List<DictionaryValue> dataList;
+        public List<DictionaryValue> eventsList;
+
         #region Interface instance properties
         public int MaxHealth { get => maxHealth; set => maxHealth = value; }
         public int Health { get => health; set => health = value; }
@@ -44,7 +50,7 @@ namespace Brad.Character
 
         #region MonoBehaviour
 
-        private void Start()
+        private void OnEnable()
         {
             TryGetComponent(out handler);
             TryGetComponent(out damage);
@@ -58,10 +64,11 @@ namespace Brad.Character
             #region State initialisation
 
             if (handler != null)
-            {
+            {;
                 for(int i = 0; i < so_Attributes.attributes.Length; i++)
                 {
                     SO_C_Attributes.Attribute tmpAttribute = so_Attributes.attributes[i];
+
                     switch (tmpAttribute.type)
                     {
                         case SO_C_Attributes.Attribute.variableType.Type_Float:
@@ -85,6 +92,7 @@ namespace Brad.Character
 
                     handler.SetValue($"State_{state.name}", stateInstance);
                 }
+
                 #endregion
 
                 #region Data initialisation
@@ -93,34 +101,70 @@ namespace Brad.Character
 
                 #region Event initialisation
 
-                EnableNPC();
-
+                handler.SetValue("T_Mesh", transform.Find($"{gameObject.name}_Mesh"));
                 //handler.AddEvent("Next_State", NextState);
                 handler.AddEvent("Enable_C", EnableNPC);
                 handler.AddEvent("Disable_C", DisableNPC);
+                handler.AddEvent("Set_B_InRangeOfPlayer", Set_InRangeOfPlayer);
+
+                EnableNPC();
 
                 #endregion
-
-                /*
-                for (int i = 0; i < data.Count; i++)
-                {
-                    Debug.Log($"DataDictionary({i}) = {data.ElementAt(i).Key}, {data.ElementAt(i).Value}");
-                }
-
-                for (int i = 0; i < events.Count; i++)
-                {
-                    Debug.Log($"EventDictionary({i}) = {events.ElementAt(i).Key}, {events.ElementAt(i).Value}");
-                }*/
             }
+            /*
+            // Trigger all events that call to "set" a data variable
+            for(int i = 0; i < events.Count; i++)
+            {
+                if (events.ElementAt(i).Key.Contains("Set_") ^ events.ElementAt(i).Key.Contains("Get_"))
+                {
+                    events.ElementAt(i).Value.Invoke();
+                }
+            }*/
+        }
+
+        void UpdateLists()
+        {
+            dataList = new List<DictionaryValue>();
+            eventsList = new List<DictionaryValue>();
+
+            for (int i = 0; i < data.Count; i++)
+            {
+                Debug.Log($"DataDictionary({i}) = {data.ElementAt(i).Key}, {data.ElementAt(i).Value}");
+
+                DictionaryValue val = new DictionaryValue { key = data.ElementAt(i).Key, value = data.ElementAt(i).Value.ToString() };
+                dataList.Add(val);
+            }
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                Debug.Log($"EventDictionary({i}) = {events.ElementAt(i).Key}, {events.ElementAt(i).Value}");
+
+                DictionaryValue val = new DictionaryValue { key = events.ElementAt(i).Key, value = events.ElementAt(i).Value.ToString() };
+                eventsList.Add(val);
+            }
+        }
+
+        new void Update()
+        {
+            base.Update();
             
-            currentState = GetInitialState();
-            if (currentState != null)
-                currentState.Enter();
+            if (Input.GetKeyDown(KeyCode.P))
+                StartFSM();
+            
+            if (Input.GetKeyDown(KeyCode.U))
+                UpdateLists();
         }
 
         #endregion
 
         #region Custom Methods
+
+        void StartFSM()
+        {
+            currentState = GetInitialState();
+            if (currentState != null)
+                currentState.Enter();
+        }
 
         #region Event methods
 
@@ -143,6 +187,14 @@ namespace Brad.Character
                     comp.enabled = false;
                 }
             }
+        }
+
+        void Set_InRangeOfPlayer() => handler.SetValue("B_InRangeOfPlayer", InRangeOfPlayer());
+
+        bool InRangeOfPlayer()
+        {
+            float distToPlayer = Vector3.Distance(transform.position, Player_Controller.Instance.transform.position);
+            return distToPlayer < handler.GetValue<float>("F_MaxDistToPlayer");
         }
 
         #endregion

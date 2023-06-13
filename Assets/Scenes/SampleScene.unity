@@ -1598,9 +1598,17 @@ PrefabInstance:
       propertyPath: so_Attributes
       value: 
       objectReference: {fileID: 11400000, guid: 504f61119036b084a96ca2b873c3194d, type: 2}
+    - target: {fileID: 770270271356491068, guid: 529225ab592331a439e1575bd7fd5307, type: 3}
+      propertyPath: dataList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 770270271356491070, guid: 529225ab592331a439e1575bd7fd5307, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 770270271356491070, guid: 529225ab592331a439e1575bd7fd5307, type: 3}
+      propertyPath: proximityMask.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 3707516310476215435, guid: 529225ab592331a439e1575bd7fd5307, type: 3}
       propertyPath: m_Enabled

@@ -27,7 +27,7 @@ public class C_Move : MonoBehaviour
 
     #region MonoBehaviour
 
-    private void OnEnable()
+    private void Start()
     {
         // Cache components
         TryGetComponent(out _handler);
@@ -60,6 +60,8 @@ public class C_Move : MonoBehaviour
 
         else
             Debug.LogError(_handler.GetType().ToString() + " could not be found");
+
+        mesh = _handler.GetValue<Transform>("T_Mesh");
     }
     private void Update()
     {

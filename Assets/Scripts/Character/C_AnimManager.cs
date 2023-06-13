@@ -15,7 +15,7 @@ public class C_AnimManager : MonoBehaviour
 
     #region MonoBehaviour
 
-    private void OnEnable()
+    private void Start()
     {
         // Cache components
         TryGetComponent(out _handler);
@@ -39,8 +39,7 @@ public class C_AnimManager : MonoBehaviour
         if(_handler != null)
         {
             // Set the anim float to drive the blend tree (to make the character run)
-            _handler.TriggerEvent("Refresh_VelocityV");
-            anim.SetFloat("Forward", _handler.GetValue<Vector3>("VelocityV").magnitude);
+            anim.SetFloat("Forward", _handler.GetValue<Vector3>("V_Velocity").magnitude);
 
             // #CONSIDER# - Allowing strafing, not just moving forward!
         }

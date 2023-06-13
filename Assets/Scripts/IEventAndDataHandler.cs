@@ -13,15 +13,22 @@ public interface IEventAndDataHandler
     {
         if(EventDictionary.Count > 0)
         {
-            if (EventDictionary.ContainsKey("Get_" + key) != false)
+            if (EventDictionary.ContainsKey("Get_" + key))
                 TriggerEvent("Get_" + key);
         }
 
         if (DataDictionary.ContainsKey(key))
+        {
             DataDictionary[key] = value;
+            Debug.Log($"Data: The value at ({key}) has been changed to... ({value})");
+        }
 
         else
+        {
             DataDictionary.Add(key, value);
+            Debug.Log($"Data: A new value at ({key}) has been created with... ({value})");
+        }
+            
     }
     public T GetValue<T>(string key)
     {
@@ -44,16 +51,26 @@ public interface IEventAndDataHandler
     public void AddEvent(string eventName, Action eventAction)
     {
         if (EventDictionary.ContainsKey(eventName))
+        {
             EventDictionary[eventName] += eventAction;
+            Debug.Log($"Event: The event at ({eventName}) has added a new action... ({eventAction})");
+        }
 
         else
+        {
             EventDictionary.Add(eventName, eventAction);
+            Debug.Log($"Event: A new event at ({eventName}) has been created with... ({eventAction})");
+        }
+            
     }
 
     public void RemoveEvent(string eventName, Action eventAction)
     {
         if (EventDictionary.ContainsKey(eventName))
+        {
             EventDictionary[eventName] -= eventAction;
+            Debug.Log($"Event: The event at ({eventName}) has removed an action... ({eventAction})");
+        }
     }
 
     public void TriggerEvent(string eventName)
@@ -61,7 +78,11 @@ public interface IEventAndDataHandler
         if (EventDictionary.ContainsKey(eventName))
         {
             if (EventDictionary[eventName].GetInvocationList().Length > 0)
+            {
                 EventDictionary[eventName]?.Invoke();
+                Debug.Log($"Event: The event at ({eventName}) has been triggered");
+            }
+                
 
             else
                 Debug.LogWarning($"The invocation list for '{eventName}' is empty.");
