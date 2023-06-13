@@ -6,9 +6,9 @@ using UnityEngine;
 namespace Brad.FSM
 {
     [System.Serializable]
-    public class BaseState
+    public abstract class BaseState : ScriptableObject
     {
-        public string name;
+        public new string name;
         protected StateMachine stateMachine;
 
         public BaseState(string name, StateMachine stateMachine)

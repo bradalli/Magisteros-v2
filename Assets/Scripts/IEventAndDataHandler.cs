@@ -7,11 +7,15 @@ public interface IEventAndDataHandler
 {
     #region Data handling
     public Dictionary<string, object> DataDictionary { get; set; }
+    public Dictionary<string, Action> EventDictionary { get; set; }
 
     public void SetValue<T>(string key, T value)
     {
-        if (EventDictionary.ContainsKey("Get_" + key))
-            TriggerEvent("Get_" + key);
+        if(EventDictionary.Count > 0)
+        {
+            if (EventDictionary.ContainsKey("Get_" + key) != false)
+                TriggerEvent("Get_" + key);
+        }
 
         if (DataDictionary.ContainsKey(key))
             DataDictionary[key] = value;
@@ -35,7 +39,7 @@ public interface IEventAndDataHandler
     #endregion
 
     #region Event handling
-    public Dictionary<string, Action> EventDictionary { get; set; }
+    
 
     public void AddEvent(string eventName, Action eventAction)
     {

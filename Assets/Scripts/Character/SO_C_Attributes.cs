@@ -2,6 +2,7 @@ using Brad.FSM;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -24,8 +25,7 @@ public class SO_C_Attributes : ScriptableObject
     public struct State
     {
         public string name;
-        [SerializeField]
-        public Object stateClass;
+        public MonoScript stateClass;
     }
 
     public Attribute[] attributes;

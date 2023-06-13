@@ -30,7 +30,7 @@ namespace Brad.Character
 
         #region Monobehaviour
 
-        private void OnEnable()
+        private void Start()
         {
             TryGetComponent(out myCollider);
             TryGetComponent(out _handler);
@@ -54,7 +54,7 @@ namespace Brad.Character
 
         public void OnDrawGizmos()
         {
-            if (Application.isPlaying)
+            if (Application.isPlaying && this.enabled)
             {
                 // Proximity gizmos
                 Gizmos.color = Color.cyan;

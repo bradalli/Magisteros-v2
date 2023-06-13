@@ -17,7 +17,7 @@ public class S_Search : BaseState
     float searchRange = 20f;
     Vector3 searchPosition;
 
-    int sampleAttempts = 0;
+    //int sampleAttempts = 0;
 
     public S_Search(StateMachine stateMachine) : base("Search", stateMachine)
     {

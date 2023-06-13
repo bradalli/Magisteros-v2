@@ -7,7 +7,7 @@ public class NPC_AnimEvents : MonoBehaviour
 {
     IEventAndDataHandler _handler;
 
-    private void OnEnable()
+    private void Start()
     {
         transform.parent.TryGetComponent(out _handler);
     }

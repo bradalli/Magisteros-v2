@@ -4,7 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using StateMachine = Brad.FSM.StateMachine;
 
 namespace Brad.Character
@@ -14,7 +16,8 @@ namespace Brad.Character
         #region Public Variables
         //Event and data handler
         public SO_C_Attributes so_Attributes;
-        IEventAndDataHandler handler;
+        public IEventAndDataHandler handler;
+        IDamagable damage;
         [HideInInspector]
         public Dictionary<string, object> data;
         [HideInInspector]
@@ -41,14 +44,20 @@ namespace Brad.Character
 
         #region MonoBehaviour
 
-        private void Awake()
+        private void Start()
         {
             TryGetComponent(out handler);
+            TryGetComponent(out damage);
+
+            handler.EventDictionary = new Dictionary<string, Action>();
+            handler.DataDictionary = new Dictionary<string, object>();
+
+            damage.ResetHealth();
 
             // NPC
             #region State initialisation
 
-            if(handler != null)
+            if (handler != null)
             {
                 for(int i = 0; i < so_Attributes.attributes.Length; i++)
                 {
@@ -71,7 +80,9 @@ namespace Brad.Character
 
                 foreach (SO_C_Attributes.State state in so_Attributes.states)
                 {
-                    //handler.SetValue($"State_{state.name}", state.stateClass.GetComponent<BaseState>());
+                    BaseState stateInstance = (BaseState)ScriptableObject.CreateInstance(state.stateClass.GetClass());
+
+                    handler.SetValue($"State_{state.name}", stateInstance);
                 }
                 #endregion
 
@@ -82,12 +93,26 @@ namespace Brad.Character
                 #region Event initialisation
 
                 //handler.AddEvent("Next_State", NextState);
-                //handler.AddEvent("Enable_C", EnableNPC);
-                //handler.AddEvent("Disable_C", DisableNPC);
+                handler.AddEvent("Enable_C", EnableNPC);
+                handler.AddEvent("Disable_C", DisableNPC);
 
                 #endregion
-            }
 
+                /*
+                for (int i = 0; i < data.Count; i++)
+                {
+                    Debug.Log($"DataDictionary({i}) = {data.ElementAt(i).Key}, {data.ElementAt(i).Value}");
+                }
+
+                for (int i = 0; i < events.Count; i++)
+                {
+                    Debug.Log($"EventDictionary({i}) = {events.ElementAt(i).Key}, {events.ElementAt(i).Value}");
+                }*/
+            }
+            
+            currentState = GetInitialState();
+            if (currentState != null)
+                currentState.Enter();
         }
 
         #endregion

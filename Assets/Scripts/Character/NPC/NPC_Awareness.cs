@@ -20,7 +20,7 @@ namespace Brad.Character
 
         #region Monobehaviour
 
-        private void OnEnable()
+        private void Start()
         {
             if (TryGetComponent(out _handler))
             {
