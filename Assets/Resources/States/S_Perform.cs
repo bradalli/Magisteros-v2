@@ -9,10 +9,11 @@ public class S_Perform : BaseState
     IEventAndDataHandler _handler;
     private NPC_Controller _cont;
     private CharacterAction _action;
+    /*
     public S_Perform(NPC_Controller stateMachine) : base("Peform", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {

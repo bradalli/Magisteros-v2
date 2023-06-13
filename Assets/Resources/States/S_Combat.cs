@@ -17,14 +17,15 @@ public class S_Combat : BaseState
     bool attacking;
     float lastAttackTime;
     float startTargetLost;
-
+    /*
     public S_Combat(StateMachine stateMachine) : base("Combat", stateMachine)
     {
         fsMachine = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        fsMachine = stateMachine;
         fsMachine.TryGetComponent(out _handler);
         base.Enter();
 

@@ -8,13 +8,15 @@ public class S_Idle : BaseState
 {
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
+    /*
     public S_Idle(NPC_Controller stateMachine) : base("Idle", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
         base.Enter();
 

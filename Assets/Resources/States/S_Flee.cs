@@ -9,13 +9,15 @@ public class S_Flee : BaseState
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
     private Vector3 fleeDirection;
+    /*
     public S_Flee(NPC_Controller stateMachine) : base("Flee", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
         base.Enter();
 

@@ -8,13 +8,15 @@ public class S_Dead : BaseState
 {
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
+    /*
     public S_Dead(StateMachine stateMachine) : base("Dead", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
 
         base.Enter();

@@ -81,6 +81,7 @@ namespace Brad.Character
                 foreach (SO_C_Attributes.State state in so_Attributes.states)
                 {
                     BaseState stateInstance = (BaseState)ScriptableObject.CreateInstance(state.stateClass.GetClass());
+                    stateInstance.SetValues(state.name, this);
 
                     handler.SetValue($"State_{state.name}", stateInstance);
                 }
@@ -91,6 +92,8 @@ namespace Brad.Character
                 #endregion
 
                 #region Event initialisation
+
+                EnableNPC();
 
                 //handler.AddEvent("Next_State", NextState);
                 handler.AddEvent("Enable_C", EnableNPC);

@@ -24,13 +24,15 @@ public class S_Alert : BaseState
 
     float lookAtPosLength;
     float lastLookTime;
+    /*
     public S_Alert(StateMachine stateMachine) : base("Alert", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
 
         _handler.TriggerEvent("Start_Combat");

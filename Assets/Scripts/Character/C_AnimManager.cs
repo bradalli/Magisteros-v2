@@ -19,7 +19,7 @@ public class C_AnimManager : MonoBehaviour
     {
         // Cache components
         TryGetComponent(out _handler);
-        TryGetComponent(out anim);
+        anim = GetComponentInChildren<Animator>();
 
         // Only continue if component(s) are found
         if (_handler != null)
@@ -59,8 +59,8 @@ public class C_AnimManager : MonoBehaviour
     #region Event methods
 
     void Trigger_AnimAttack() => anim.SetTrigger("Attack");
-    void Trigger_AnimRespawn() => anim.SetBool("Dead", false);
-    void Trigger_AnimDead() => anim.SetBool("Dead", true);
+    void Trigger_AnimRespawn() => anim.SetTrigger("Respawn");
+    void Trigger_AnimDead() => anim.SetTrigger("Die");
 
     #endregion
 

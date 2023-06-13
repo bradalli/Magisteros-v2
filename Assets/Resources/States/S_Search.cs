@@ -18,14 +18,15 @@ public class S_Search : BaseState
     Vector3 searchPosition;
 
     //int sampleAttempts = 0;
-
+    /*
     public S_Search(StateMachine stateMachine) : base("Search", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
         base.Enter();
         enterTime = Time.time;

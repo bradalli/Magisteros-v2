@@ -15,14 +15,15 @@ public class S_Spawn : BaseState
     #endregion
 
     #region State methods
-
+    /*
     public S_Spawn(StateMachine stateMachine) : base("Spawn", stateMachine)
     {
         fsMachine = stateMachine;
         fsMachine.TryGetComponent(out _dmg);
-    }
+    }*/
     public override void Enter()
     {
+        fsMachine = stateMachine;
         fsMachine.TryGetComponent(out _handler);
 
         base.Enter();

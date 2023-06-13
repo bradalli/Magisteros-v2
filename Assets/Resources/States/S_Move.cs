@@ -9,13 +9,15 @@ public class S_Move : BaseState
     private IEventAndDataHandler _handler;
     private StateMachine _cont;
     private Waypoint _wayp;
+    /*
     public S_Move(StateMachine stateMachine) : base("Move", stateMachine)
     {
         _cont = stateMachine;
-    }
+    }*/
 
     public override void Enter()
     {
+        _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
 
         base.Enter();
