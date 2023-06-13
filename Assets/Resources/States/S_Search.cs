@@ -47,8 +47,7 @@ public class S_Search : BaseState
 
         #region Transitions
         // -> Despawn
-        _handler.TriggerEvent("Refresh_InRangeToPlayerB");
-        if (!_handler.GetValue<bool>("InRangeToPlayerB"))
+        if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
             _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
@@ -70,7 +69,7 @@ public class S_Search : BaseState
         #endregion
 
         //Debug.Log(_cont.Get_RemainingNavDistance());
-        if(_handler.GetValue<bool>("B_ViewContainsThreat"))
+        if(!_handler.GetValue<bool>("B_ViewContainsThreat") && _handler.GetValue<bool>("B_DestinationReach"))
         {
             // Find a random position within the searchRange and sample it from the nav mesh.
             Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;

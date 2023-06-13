@@ -21,7 +21,7 @@ public class S_Idle : BaseState
         base.Enter();
 
         _handler.TriggerEvent("Stop_Move");
-        _handler.TriggerEvent("Stop_LookAtTarget");
+        _handler.TriggerEvent("Stop_LookAt");
     }
 
     public override void UpdateState()

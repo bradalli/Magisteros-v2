@@ -17,12 +17,11 @@ public class C_Move : MonoBehaviour
 
     private Waypoint currentWaypoint;
 
-    bool lookAtTargetB = false;
-    private Vector3 lookAtDir = Vector3.forward;
-    private Vector3 targetLookDir;
-    private Transform followTarget;
-    private Transform lookTarget;
-    private Vector3 lookPos;
+    [SerializeField] bool lookAtTargetB = false;
+    private Vector3 lookDirection;
+    [SerializeField] private Transform followTarget;
+    [SerializeField] private Transform lookTarget;
+    [SerializeField] private Vector3 lookPos;
     #endregion
 
     #region MonoBehaviour
@@ -109,16 +108,30 @@ public class C_Move : MonoBehaviour
 
     void Look()
     {
-        // Only look at target if bool is true and target is also not null
-        targetLookDir = lookAtTargetB && lookTarget ? 
-            navAgent.transform.position - lookTarget.position : navAgent.velocity.normalized;
-        
+        if (lookAtTargetB)
+        {
+            if (lookTarget != null)
+            {
+                lookDirection = navAgent.transform.position - lookTarget.position;
+            }
+
+            else
+            {
+                lookDirection = navAgent.transform.position - lookPos;
+            }
+        }
+
+        else
+        {
+            lookDirection = navAgent.velocity.normalized;
+        }
+
         // Rotate mesh to look at lookAtDir at the speed of lookSpeed
-        lookAtDir = Vector3.RotateTowards(mesh.forward, targetLookDir, lookSpeed * Time.deltaTime, 1);
-        lookAtDir = new Vector3(lookAtDir.x, 0, lookAtDir.z); // Ensure targetLookDir.y is 0
+        lookDirection = Vector3.RotateTowards(mesh.forward, lookDirection, lookSpeed * Time.deltaTime, 1);
+        lookDirection = new Vector3(lookDirection.x, 0, lookDirection.z); // Ensure targetLookDir.y is 0
 
         // Convert the vector to a quaternion, using mesh's up vector as up
-        mesh.rotation = Quaternion.LookRotation(lookAtDir, mesh.up);
+        mesh.rotation = Quaternion.LookRotation(lookDirection, mesh.up);
     }
 
     #endregion

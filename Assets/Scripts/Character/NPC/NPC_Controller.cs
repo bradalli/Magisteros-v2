@@ -129,17 +129,13 @@ namespace Brad.Character
 
             for (int i = 0; i < data.Count; i++)
             {
-                Debug.Log($"DataDictionary({i}) = {data.ElementAt(i).Key}, {data.ElementAt(i).Value}");
-
-                DictionaryValue val = new DictionaryValue { key = data.ElementAt(i).Key, value = data.ElementAt(i).Value.ToString() };
+                DictionaryValue val = new DictionaryValue { key = handler.DataDictionary.ElementAt(i).Key, value = handler.DataDictionary.ElementAt(i).Value.ToString() };
                 dataList.Add(val);
             }
 
             for (int i = 0; i < events.Count; i++)
             {
-                Debug.Log($"EventDictionary({i}) = {events.ElementAt(i).Key}, {events.ElementAt(i).Value}");
-
-                DictionaryValue val = new DictionaryValue { key = events.ElementAt(i).Key, value = events.ElementAt(i).Value.ToString() };
+                DictionaryValue val = new DictionaryValue { key = handler.EventDictionary.ElementAt(i).Key, value = handler.EventDictionary.ElementAt(i).Value.ToString() };
                 eventsList.Add(val);
             }
         }
@@ -150,9 +146,9 @@ namespace Brad.Character
             
             if (Input.GetKeyDown(KeyCode.P))
                 StartFSM();
-            
+            /*
             if (Input.GetKeyDown(KeyCode.U))
-                UpdateLists();
+                UpdateLists();*/
         }
 
         #endregion

@@ -35,8 +35,9 @@ public class S_Alert : BaseState
         _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
 
-        _handler.TriggerEvent("Start_Combat");
+        //_handler.TriggerEvent("Start_Combat");
         _handler.TriggerEvent("Stop_Move");
+        _handler.TriggerEvent("Start_LookAt");
 
         lookAtPosLength = alertTimeLength / lookAroundNum;
 
@@ -90,7 +91,7 @@ public class S_Alert : BaseState
                 _target = tmpTarget;
         }
 
-        if (_target != null)
+        if (_target == null)
         {
             // Every time lookAtPosLength has elapsed, pick a new direction to look
             if(timePassedLook > lookAtPosLength)
@@ -114,7 +115,7 @@ public class S_Alert : BaseState
 
     public override void Exit()
     {
-        _handler.TriggerEvent("Stop_Combat");
+        //_handler.TriggerEvent("Stop_Combat");
         _handler.TriggerEvent("Stop_LookAt");
         base.Exit();
     }
