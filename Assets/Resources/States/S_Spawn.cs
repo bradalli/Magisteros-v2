@@ -28,7 +28,9 @@ public class S_Spawn : BaseState
 
         base.Enter();
         _handler.TriggerEvent("Disable_C");
-        _handler.TriggerEvent("Respawn");
+        fsMachine.TryGetComponent(out _dmg);
+        if (_dmg.Health <= 0) 
+            _handler.TriggerEvent("Respawn");
     }
 
     public override void UpdateState()

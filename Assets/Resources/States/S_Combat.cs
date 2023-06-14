@@ -123,6 +123,8 @@ public class S_Combat : BaseState
         _handler.TriggerEvent("Stop_Move");
         //_handler.TriggerEvent("Stop_LookAt");
         _handler.TriggerEvent("Stop_Combat");
+        _handler.SetValue<Transform>("T_FollowTarget", null);
+        _handler.SetValue<Transform>("T_LookTarget", null);
         base.Exit();
     }
 }

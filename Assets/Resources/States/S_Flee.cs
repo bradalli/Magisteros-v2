@@ -9,6 +9,7 @@ public class S_Flee : BaseState
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
     private Vector3 fleeDirection;
+    IDamagable myDmg;
     /*
     public S_Flee(NPC_Controller stateMachine) : base("Flee", stateMachine)
     {
@@ -24,6 +25,8 @@ public class S_Flee : BaseState
         // Work out target flee direction
         fleeDirection = (_cont.transform.position - _handler.GetValue<Vector3>("V_ProxThreatsAvgPosition")).normalized;
         _handler.TriggerEvent("Start_Move");
+
+        _cont.transform.TryGetComponent(out myDmg);
     }
 
     public override void UpdateState()
@@ -34,6 +37,15 @@ public class S_Flee : BaseState
         {
             _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
+        }
+
+        // -> Dead
+        if (myDmg != null)
+        {
+            if (myDmg.Health == 0)
+            {
+                _cont.ChangeState(_handler.GetValue<BaseState>("State_Dead"));
+            }
         }
 
         // -> Idle

@@ -101,7 +101,7 @@ namespace Brad.Character
 
                 #region Event initialisation
 
-                handler.SetValue("T_Mesh", transform.Find($"{gameObject.name}_Mesh"));
+                handler.SetValue("T_Mesh", transform.GetChild(0));
                 //handler.AddEvent("Next_State", NextState);
                 handler.AddEvent("Enable_C", EnableNPC);
                 handler.AddEvent("Disable_C", DisableNPC);
