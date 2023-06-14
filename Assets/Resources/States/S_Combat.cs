@@ -11,7 +11,7 @@ public class S_Combat : BaseState
     private IEventAndDataHandler _handler;
     IDamagable myDmg, targetDmg;
     Transform target;
-    float _attackDistance = 1.5f;
+    float _attackDistance = 2f;
     float _attackDelay = 0.5f;
 
     bool attacking;
@@ -32,11 +32,11 @@ public class S_Combat : BaseState
         fsMachine.transform.TryGetComponent(out myDmg);
         target = _handler.GetValue<Transform>("T_ClosestThreatInView");
 
-        //_handler.SetValue("T_LookTarget", target);
+        _handler.SetValue("T_LookTarget", target);
         _handler.SetValue("T_FollowTarget", target);
 
         _handler.TriggerEvent("Start_Move");
-        //_handler.TriggerEvent("Start_LookAt");
+        _handler.TriggerEvent("Start_LookAt");
         _handler.TriggerEvent("Start_Combat");
 
         _handler.AddEvent("Stop_Attack", SetLastAttackTime);
@@ -55,7 +55,7 @@ public class S_Combat : BaseState
         // -> Dead
         if (myDmg != null)
         {
-            if (myDmg.Health == 0)
+            if (myDmg.Health <= 0)
             {
                 fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Dead"));
             }
@@ -121,7 +121,7 @@ public class S_Combat : BaseState
     {
         _handler.RemoveEvent("Stop_Attack", SetLastAttackTime);
         _handler.TriggerEvent("Stop_Move");
-        //_handler.TriggerEvent("Stop_LookAt");
+        _handler.TriggerEvent("Stop_LookAt");
         _handler.TriggerEvent("Stop_Combat");
         _handler.SetValue<Transform>("T_FollowTarget", null);
         _handler.SetValue<Transform>("T_LookTarget", null);

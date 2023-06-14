@@ -65,6 +65,7 @@ public class C_Move : MonoBehaviour
             Debug.LogError(_handler.GetType().ToString() + " could not be found");
 
         mesh = _handler.GetValue<Transform>("T_Mesh");
+        navAgent.isStopped = true;
     }
     private void Update()
     {
@@ -126,19 +127,22 @@ public class C_Move : MonoBehaviour
         {
             if (lookTarget != null)
             {
-                lookDirection = navAgent.transform.position - lookTarget.position;
+                lookDirection = lookTarget.position - navAgent.transform.position;
             }
 
             else
             {
-                lookDirection = navAgent.transform.position - lookPos;
+                lookDirection = lookPos - navAgent.transform.position;
             }
         }
 
-        else if(navAgent.velocity.magnitude > 0.5f)
+        else if (navAgent.velocity.magnitude > 0.5f)
         {
             lookDirection = navAgent.velocity.normalized;
         }
+
+        else
+            lookDirection = mesh.forward;
 
         // Rotate mesh to look at lookAtDir at the speed of lookSpeed
         lookDirection = Vector3.RotateTowards(mesh.forward, lookDirection, lookSpeed * Time.deltaTime, 1);

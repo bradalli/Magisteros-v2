@@ -68,6 +68,8 @@ public class C_Combat : MonoBehaviour
     void AttackCast()
     {
         meshT = _handler.GetValue<Transform>("T_Mesh");
+        damage = _handler.GetValue<int>("I_Damage");
+
         if (Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1) != null)
         {
             // Create a list of targets that are found within an overlap sphere

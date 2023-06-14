@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3707516310476215435}
   - component: {fileID: 707505887}
   m_Layer: 6
-  m_Name: NPC
+  m_Name: Enemy
   m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +67,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 3
+  m_StoppingDistance: 1.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -139,6 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2865da30c21cc484a8b17584d68ed645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combat: 0
+  attacking: 0
 --- !u!114 &707505887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,7 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47653ac2168deb4489fc2cd5ca27603e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookAtTargetB: 0
+  mesh: {fileID: 0}
+  moving: 0
+  looking: 0
   followTarget: {fileID: 0}
   lookTarget: {fileID: 0}
   lookPos: {x: 0, y: 0, z: 0}
