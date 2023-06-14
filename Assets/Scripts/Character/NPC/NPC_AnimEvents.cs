@@ -21,5 +21,6 @@ public class NPC_AnimEvents : MonoBehaviour
     public void AttackEnd()
     {
         _handler.TriggerEvent("Stop_Attack");
+        Debug.Log("HERE");
     }
 }

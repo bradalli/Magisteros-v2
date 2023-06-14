@@ -111,15 +111,6 @@ namespace Brad.Character
 
                 #endregion
             }
-            /*
-            // Trigger all events that call to "set" a data variable
-            for(int i = 0; i < events.Count; i++)
-            {
-                if (events.ElementAt(i).Key.Contains("Set_") ^ events.ElementAt(i).Key.Contains("Get_"))
-                {
-                    events.ElementAt(i).Value.Invoke();
-                }
-            }*/
         }
 
         void UpdateLists()
@@ -140,15 +131,27 @@ namespace Brad.Character
             }
         }
 
+        void UpdateVariables()
+        {
+            // Trigger all events that call to "set" or "get" a data variable
+            for (int i = 0; i < events.Count; i++)
+            {
+                if (events.ElementAt(i).Key.Contains("Set_") ^ events.ElementAt(i).Key.Contains("Get_"))
+                {
+                    events.ElementAt(i).Value.Invoke();
+                }
+            }
+        }
+
         new void Update()
         {
             base.Update();
             
             if (Input.GetKeyDown(KeyCode.P))
                 StartFSM();
-            /*
+
             if (Input.GetKeyDown(KeyCode.U))
-                UpdateLists();*/
+                UpdateVariables();
         }
 
         #endregion

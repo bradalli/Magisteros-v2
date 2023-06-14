@@ -8,6 +8,9 @@ public class C_Combat : MonoBehaviour
 {
     #region Private variables
 
+    [SerializeField] bool combat;
+    [SerializeField] bool attacking;
+
     IEventAndDataHandler _handler;
 
     int damage = 5;
@@ -64,7 +67,9 @@ public class C_Combat : MonoBehaviour
 
     void AttackCast()
     {
-        if(Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1) != null)
+        Debug.Log(meshT);
+
+        if (Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1) != null)
         {
             // Create a list of targets that are found within an overlap sphere
             List<Collider> hitColliders = Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1).ToList();
@@ -86,8 +91,16 @@ public class C_Combat : MonoBehaviour
             }
         }
     }
-    void Start_Attack() => _handler.SetValue("B_Attacking", true);
-    void Stop_Attack() => _handler.SetValue("B_Attacking", false);
+    void Start_Attack() 
+    { 
+        _handler.SetValue("B_Attacking", true);
+        attacking = true;
+    }
+    void Stop_Attack() 
+    { 
+        _handler.SetValue("B_Attacking", false);
+        attacking = false;
+    }
     void Start_Combat() { }
     void Stop_Combat() { }
 

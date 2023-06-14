@@ -38,6 +38,8 @@ public class S_Combat : BaseState
         _handler.TriggerEvent("Start_Move");
         //_handler.TriggerEvent("Start_LookAt");
         _handler.TriggerEvent("Start_Combat");
+
+        _handler.AddEvent("Stop_Attack", SetLastAttackTime);
     }
 
     public override void UpdateState()
@@ -95,25 +97,29 @@ public class S_Combat : BaseState
         {
             if (Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
             {
-                if (!_handler.GetValue<bool>("B_Attacking") && (Time.time - lastAttackTime) > _attackDelay)
+                if ((Time.time - lastAttackTime) > _attackDelay && !_handler.GetValue<bool>("B_Attacking"))
                 {
                     _handler.TriggerEvent("Stop_Move");
                     _handler.TriggerEvent("Start_Attack");
-                    return;
                 }
             }
 
-            else if (!_handler.GetValue<bool>("B_Moving"))
+            else if (!_handler.GetValue<bool>("B_Moving") && !_handler.GetValue<bool>("B_Attacking"))
             {
-                lastAttackTime = Time.time;
                 _handler.TriggerEvent("Start_Move");
                 //_handler.TriggerEvent("Start_LookAt");
             }
         }
     }
 
+    void SetLastAttackTime()
+    {
+        lastAttackTime = Time.time;
+    }
+
     public override void Exit()
     {
+        _handler.RemoveEvent("Stop_Attack", SetLastAttackTime);
         _handler.TriggerEvent("Stop_Move");
         //_handler.TriggerEvent("Stop_LookAt");
         _handler.TriggerEvent("Stop_Combat");

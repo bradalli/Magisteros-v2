@@ -57,7 +57,11 @@ public class C_AnimManager : MonoBehaviour
 
     #region Event methods
 
-    void Trigger_AnimAttack() => anim.SetTrigger("Attack");
+    void Trigger_AnimAttack()
+    {
+        _handler.SetValue("B_Attacking", true);
+        anim.SetTrigger("Attack");
+    }
     void Trigger_AnimRespawn() => anim.SetTrigger("Respawn");
     void Trigger_AnimDead() => anim.SetTrigger("Die");
 
