@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine.AI;
 
 namespace Brad.Character
 {
-    public class Player_Controller : MonoBehaviour, IDamagable
+    public class Player_Controller : MonoBehaviour, IDamagable, IEventAndDataHandler
     {
         public static Player_Controller Instance;
 
@@ -13,10 +14,12 @@ namespace Brad.Character
         [SerializeField] int health;
 
         [SerializeField] float lookSpeed;
+        [SerializeField] int damage = 25;
 
         private Transform meshT;
         private NavMeshAgent navAgent;
         private Animator anim;
+        public IEventAndDataHandler handler;
 
         #region interface instance properties
         public int MaxHealth
@@ -29,15 +32,29 @@ namespace Brad.Character
             get { return health; }
             set { health = value; }
         }
+
+        public Dictionary<string, object> data;
+        public Dictionary<string, Action> events;
+        public Dictionary<string, object> DataDictionary { get => data; set => data = value; }
+        public Dictionary<string, Action> EventDictionary { get => events; set => events = value; }
         #endregion
 
-        private void Awake()
+        private void OnEnable()
         {
+            TryGetComponent(out handler);
+            handler.EventDictionary = new Dictionary<string, Action>();
+            handler.DataDictionary = new Dictionary<string, object>();
+
             Instance = this;
             health = maxHealth;
             TryGetComponent(out navAgent);
+            
             anim = GetComponentInChildren<Animator>();
             meshT = transform.Find("Player_Mesh");
+
+            handler.SetValue("T_Mesh", meshT);
+            handler.SetValue("I_Damage", damage);
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -53,11 +70,16 @@ namespace Brad.Character
             if (navAgent)
                 navAgent.Move(moveVector * navAgent.speed * Time.deltaTime);
 
-            anim.SetFloat("Forward", moveVector.magnitude * navAgent.speed);
+            handler.SetValue("V_Velocity", moveVector * navAgent.speed);
 
             Vector3 targetLookDir = Vector3.RotateTowards(meshT.forward, moveVector, 
                 lookSpeed * Time.deltaTime, 0);
             meshT.rotation = Quaternion.LookRotation(targetLookDir, meshT.up);
+
+            if (Input.GetButtonDown("Fire1"))
+            {
+                handler.TriggerEvent("Start_Attack");
+            }
         }
     }
 }
