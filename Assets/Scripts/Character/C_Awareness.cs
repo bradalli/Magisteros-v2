@@ -82,7 +82,8 @@ namespace Brad.Character
                 #endregion
                 Gizmos.color = Color.red;
                 if (FindClosestTargetInView() != null && targetsInProximity.Count > 0)
-                    Gizmos.DrawLine(transform.position, FindClosestTargetInView().transform.position);
+                    Gizmos.DrawLine(transform.position + (FindClosestTargetInView().transform.position - 
+                        transform.position).normalized * .51f, FindClosestTargetInView().transform.position);
             }
         }
 

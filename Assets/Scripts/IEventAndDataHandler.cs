@@ -11,14 +11,10 @@ public interface IEventAndDataHandler
 
     public void SetValue<T>(string key, T value)
     {
-        if (EventDictionary.ContainsKey("Get_" + key))
-            TriggerEvent("Get_" + key);
-
         if (DataDictionary.ContainsKey(key))
         {
             DataDictionary[key] = value;
             Debug.Log($"Data: The value at ({key}) has been changed to... ({value})");
-            return;
         }
 
         else
@@ -26,7 +22,10 @@ public interface IEventAndDataHandler
             DataDictionary.Add(key, value);
             Debug.Log($"Data: A new value at ({key}) has been created with... ({value})");
         }
-            
+
+        if (EventDictionary.ContainsKey("Get_" + key))
+            TriggerEvent("Get_" + key);
+
     }
     public T GetValue<T>(string key)
     {

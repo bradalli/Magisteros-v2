@@ -15,11 +15,12 @@ public class C_Move : MonoBehaviour
 
     private IEventAndDataHandler _handler;
     private NavMeshAgent navAgent;
-    private Transform mesh;
+    public Transform mesh;
 
     private Waypoint currentWaypoint;
 
-    [SerializeField] bool lookAtTargetB = false;
+    [SerializeField] bool moving = false;
+    [SerializeField] bool looking = false;
     private Vector3 lookDirection;
     [SerializeField] private Transform followTarget;
     [SerializeField] private Transform lookTarget;
@@ -90,14 +91,22 @@ public class C_Move : MonoBehaviour
     void Set_DestinationReach() => _handler.SetValue("B_DestinationReach",
         navAgent.remainingDistance <= navAgent.stoppingDistance);
     void Set_Velocity() => _handler.SetValue("V_Velocity", navAgent.velocity);
-    void Set_Moving() => _handler.SetValue("B_Moving", navAgent.isStopped);
+    void Set_Moving() => _handler.SetValue("B_Moving", !navAgent.isStopped);
 
     #endregion
 
     #region Event methods
 
-    void Start_Move() => navAgent.isStopped = false;
-    void Stop_Move() => navAgent.isStopped = true;
+    void Start_Move() 
+    {
+        navAgent.isStopped = false;
+        moving = true;
+    }
+    void Stop_Move()
+    {
+        navAgent.isStopped = true;
+        moving = false;
+    }
     void GotoWp()
     {
         if (currentWaypoint != null)
@@ -106,14 +115,14 @@ public class C_Move : MonoBehaviour
         else
             Debug.LogError("Unable to go to CurrWp because it is null.");
     }
-    void Start_LookAt() => lookAtTargetB = true;
-    void Stop_LookAt() => lookAtTargetB = false;
+    void Start_LookAt() => looking = true;
+    void Stop_LookAt() => looking = false;
 
     #endregion
 
     void Look()
     {
-        if (lookAtTargetB)
+        if (looking)
         {
             if (lookTarget != null)
             {
@@ -141,7 +150,7 @@ public class C_Move : MonoBehaviour
 
     void Move()
     {
-        if(navAgent.destination != GetNavDestination())
+        if(!navAgent.isStopped && navAgent.destination != GetNavDestination())
             navAgent.destination = GetNavDestination();
     }
 

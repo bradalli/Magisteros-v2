@@ -11,8 +11,8 @@ public class S_Combat : BaseState
     private IEventAndDataHandler _handler;
     IDamagable myDmg, targetDmg;
     Transform target;
-    float _attackDistance = 2.5f;
-    float _attackDelay = 1f;
+    float _attackDistance = 1.5f;
+    float _attackDelay = 0.5f;
 
     bool attacking;
     float lastAttackTime;

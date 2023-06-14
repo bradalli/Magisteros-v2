@@ -96,9 +96,10 @@ namespace Brad.Character
         {
             // Determine how many threats outnumber this npc.
             int fearLevel = NumberOfTypeInList(targetType.Threat, targetsInProximity)
-                - (1 + NumberOfTypeInList(targetType.Ally, targetsInProximity));
-            return fearLevel >= maxFearLevel;
+                - (NumberOfTypeInList(targetType.Ally, targetsInProximity));
+            return fearLevel >= _handler.GetValue<int>("I_MaxFearLevel");
         }
+
         int NumberOfTypeInList(targetType type, List<Collider> list)
         {
             // Finds how many are within the proximity/view.
@@ -111,18 +112,18 @@ namespace Brad.Character
                     switch (type)
                     {
                         case targetType.Ally:
-                            if (target.CompareTag(transform.tag))
+                            if (target.gameObject.tag == transform.gameObject.tag)
                                 typeNum++;
                             break;
 
                         case targetType.Threat:
-                            if (!target.CompareTag(transform.tag))
+                            if (target.gameObject.tag != transform.gameObject.tag)
                                 typeNum++;
                             break;
                     }
                 }
             }
-
+            Debug.Log(type.ToString() + ": " + typeNum);
             return typeNum;
         }
         Transform ClosestTypeInList(targetType type, List<Collider> list)

@@ -25,7 +25,6 @@ public class C_AnimManager : MonoBehaviour
         if (_handler != null)
         {
             // Refresh data initialisation
-            _handler.AddEvent("Set_AS_CurrAnimState", Set_CurrAnimState);
 
             // Event initialisation
             _handler.AddEvent("Start_Attack", Trigger_AnimAttack);
@@ -51,7 +50,6 @@ public class C_AnimManager : MonoBehaviour
 
     #region Refresh data methods
 
-    void Set_CurrAnimState() => _handler.SetValue("AS_CurrAnimState", anim.GetCurrentAnimatorStateInfo(0));
 
     #endregion
 

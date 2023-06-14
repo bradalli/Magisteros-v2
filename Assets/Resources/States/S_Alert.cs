@@ -110,6 +110,8 @@ public class S_Alert : BaseState
 
             if (lookDirection != lastLookDirection)
                 _handler.SetValue("V_LookPosition", lookDirection);
+
+            lastLookDirection = lookDirection;
         }
     }
 

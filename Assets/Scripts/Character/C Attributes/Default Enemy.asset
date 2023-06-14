@@ -15,8 +15,9 @@ MonoBehaviour:
   attributes:
   - name: I_MaxFearLevel
     type: 2
-    value: 3
-    description: The maximum number of threats this character can handle.
+    value: 0
+    description: The maximum number of threats this character can be outnumbered
+      by.
   - name: F_FleeDistance
     type: 1
     value: 30

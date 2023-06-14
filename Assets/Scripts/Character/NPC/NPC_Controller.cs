@@ -138,6 +138,43 @@ namespace Brad.Character
             {
                 if (events.ElementAt(i).Key.Contains("Set_") ^ events.ElementAt(i).Key.Contains("Get_"))
                 {
+                    string datakey = events.ElementAt(i).Key.Remove(0, 4);
+                    if (!data.ContainsKey(datakey))
+                    {
+                        char typeSignifier = datakey[0];
+
+                        switch (typeSignifier)
+                        {
+                            case 'B': // Bool
+                                handler.SetValue(datakey, false);
+                                break;
+
+                            case 'I': // Int
+                                handler.SetValue(datakey, 0);
+                                break;
+
+                            case 'F': // Float
+                                handler.SetValue(datakey, 0f);
+                                break;
+
+                            case 'S': // String
+                                handler.SetValue(datakey, string.Empty);
+                                break;
+
+                            case 'V': // Vector3
+                                handler.SetValue(datakey, Vector3.zero);
+                                break;
+
+                            case 'T': // Transform
+                                handler.SetValue<Transform>(datakey, null);
+                                break;
+
+                            case 'W': // Waypoint
+                                handler.SetValue<Waypoint>(datakey, null);
+                                break;
+                        }
+                    }
+                        
                     events.ElementAt(i).Value.Invoke();
                 }
             }
