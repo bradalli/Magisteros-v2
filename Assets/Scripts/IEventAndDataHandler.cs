@@ -11,16 +11,14 @@ public interface IEventAndDataHandler
 
     public void SetValue<T>(string key, T value)
     {
-        if(EventDictionary.Count > 0)
-        {
-            if (EventDictionary.ContainsKey("Get_" + key))
-                TriggerEvent("Get_" + key);
-        }
+        if (EventDictionary.ContainsKey("Get_" + key))
+            TriggerEvent("Get_" + key);
 
         if (DataDictionary.ContainsKey(key))
         {
             DataDictionary[key] = value;
             Debug.Log($"Data: The value at ({key}) has been changed to... ({value})");
+            return;
         }
 
         else

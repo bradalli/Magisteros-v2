@@ -9,7 +9,9 @@ public class C_Move : MonoBehaviour
 {
     #region Private variables
     float lookSpeed = 5f;
-    float moveSpeed;
+    float moveSpeed = 5;
+
+    Vector3 moveDestination;
 
     private IEventAndDataHandler _handler;
     private NavMeshAgent navAgent;
@@ -48,6 +50,7 @@ public class C_Move : MonoBehaviour
             _handler.AddEvent("Set_B_DestinationReach", Set_DestinationReach);
             _handler.AddEvent("Set_V_Velocity", Set_Velocity);
             _handler.AddEvent("Set_W_CurrWp", Set_CurrWp);
+            _handler.AddEvent("Set_B_Moving", Set_Moving);
 
             // Event initialisation
             _handler.AddEvent("Start_Move", Start_Move);
@@ -66,6 +69,7 @@ public class C_Move : MonoBehaviour
     {
         // Make the mesh of the character look at a direction every frame
         Look();
+        Move();
     }
 
     #endregion
@@ -77,7 +81,7 @@ public class C_Move : MonoBehaviour
     void Get_LookSpeed() => lookSpeed = _handler.GetValue<float>("F_LookSpeed");
     void Get_MoveSpeed() => moveSpeed = _handler.GetValue<float>("F_MoveSpeed");
     void Get_Mesh() => mesh = _handler.GetValue<Transform>("T_Mesh");
-    void Get_Destination() => navAgent.destination = _handler.GetValue<Vector3>("V_Destination");
+    void Get_Destination() => moveDestination = _handler.GetValue<Vector3>("V_Destination");
     void Get_LookTarget() => lookTarget = _handler.GetValue<Transform>("T_LookTarget");
     void Get_LookPosition() => lookPos = _handler.GetValue<Vector3>("V_LookPosition");
     void Get_FollowTarget() => followTarget = _handler.GetValue<Transform>("T_FollowTarget");
@@ -86,6 +90,7 @@ public class C_Move : MonoBehaviour
     void Set_DestinationReach() => _handler.SetValue("B_DestinationReach",
         navAgent.remainingDistance <= navAgent.stoppingDistance);
     void Set_Velocity() => _handler.SetValue("V_Velocity", navAgent.velocity);
+    void Set_Moving() => _handler.SetValue("B_Moving", navAgent.isStopped);
 
     #endregion
 
@@ -121,7 +126,7 @@ public class C_Move : MonoBehaviour
             }
         }
 
-        else
+        else if(navAgent.velocity.magnitude > 0.5f)
         {
             lookDirection = navAgent.velocity.normalized;
         }
@@ -132,6 +137,23 @@ public class C_Move : MonoBehaviour
 
         // Convert the vector to a quaternion, using mesh's up vector as up
         mesh.rotation = Quaternion.LookRotation(lookDirection, mesh.up);
+    }
+
+    void Move()
+    {
+        if(navAgent.destination != GetNavDestination())
+            navAgent.destination = GetNavDestination();
+    }
+
+    Vector3 GetNavDestination()
+    {
+        if (followTarget != null)
+            return followTarget.position;
+
+        if (currentWaypoint != null)
+            return currentWaypoint.transform.position;
+
+        return moveDestination;
     }
 
     #endregion

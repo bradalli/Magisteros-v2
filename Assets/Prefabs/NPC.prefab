@@ -87,11 +87,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d45bc8d1ca8ae694f8def83a12372ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState:
-    name: 
-  so_Attributes: {fileID: 0}
+  currentState: {fileID: 0}
+  so_Attributes: {fileID: 11400000, guid: 504f61119036b084a96ca2b873c3194d, type: 2}
   maxHealth: 100
   health: 0
+  dataList: []
+  eventsList: []
 --- !u!114 &770270271356491070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,13 +100,21 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770270271356491063}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 802da974c339a62439cb483dbff65029, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewConeFov: 80
+  viewConeRange: 25
   targetsInView: []
-  targetsInProximity: []
+  proximityMask:
+    serializedVersion: 2
+    m_Bits: 64
+  proximityRange: 30
+  targetsInProximity:
+  - {fileID: 770270271356491056}
+  meshT: {fileID: 3166754812355574368}
 --- !u!114 &6120972396642868539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +151,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47653ac2168deb4489fc2cd5ca27603e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookAtTargetB: 0
+  followTarget: {fileID: 0}
+  lookTarget: {fileID: 0}
+  lookPos: {x: 0, y: 0, z: 0}
 --- !u!1001 &6420568092594281253
 PrefabInstance:
   m_ObjectHideFlags: 0

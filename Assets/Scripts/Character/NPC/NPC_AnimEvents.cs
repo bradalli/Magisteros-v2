@@ -18,19 +18,8 @@ public class NPC_AnimEvents : MonoBehaviour
             _handler.TriggerEvent("AttackHit");
     }
 
-    public void Set_IsAttackingTrue()
+    public void AttackEnd()
     {
-        if (_handler != null)
-        {
-            _handler.TriggerEvent("Start_Attack");
-        }
-    }
-
-    public void Set_IsAttackingFalse()
-    {
-        if (_handler != null)
-        {
-            _handler.TriggerEvent("Stop_Attack");
-        }
+        _handler.TriggerEvent("Stop_Attack");
     }
 }

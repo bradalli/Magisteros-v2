@@ -23,7 +23,7 @@ MonoBehaviour:
     description: 'The distance the character must reach to successfully flee.  '
   - name: F_MaxDistToPlayer
     type: 1
-    value: 30
+    value: 100
     description: 'The maximum distance to the player before this character is disabled.
 
 '

@@ -28,7 +28,7 @@ public class C_AnimManager : MonoBehaviour
             _handler.AddEvent("Set_AS_CurrAnimState", Set_CurrAnimState);
 
             // Event initialisation
-            _handler.AddEvent("AttackHit", Trigger_AnimAttack);
+            _handler.AddEvent("Start_Attack", Trigger_AnimAttack);
             _handler.AddEvent("Respawn", Trigger_AnimRespawn);
             _handler.AddEvent("Die", Trigger_AnimDead);
         }

@@ -29,11 +29,14 @@ public class C_Combat : MonoBehaviour
             // Refresh data initialisation GET
             _handler.AddEvent("Get_I_Damage", Get_Damage);
             _handler.AddEvent("Get_T_Mesh", Get_Mesh);
+            _handler.SetValue("B_Attacking", false);
 
             // Event initialisation
             _handler.AddEvent("AttackHit", AttackCast);
             _handler.AddEvent("Start_Attack", Start_Attack);
             _handler.AddEvent("Stop_Attack", Stop_Attack);
+            _handler.AddEvent("Start_Combat", Start_Combat);
+            _handler.AddEvent("Stop_Combat", Stop_Combat);
         }
     }
 
@@ -61,28 +64,32 @@ public class C_Combat : MonoBehaviour
 
     void AttackCast()
     {
-        // Create a list of targets that are found within an overlap sphere
-        List<Collider> hitColliders = 
-            Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1).ToList();
-        TryGetComponent(out Collider myCol);
-
-        // Exclude this character's collider if found within the list
-        if (hitColliders.Contains(myCol))
-            hitColliders.Remove(myCol);
-
-        // For each target found, apply damage to it using the IDamagable interface
-        foreach(Collider target in hitColliders)
+        if(Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1) != null)
         {
-            // Cache the target's IDamagable interface
-            target.TryGetComponent(out IDamagable targetDmg);
+            // Create a list of targets that are found within an overlap sphere
+            List<Collider> hitColliders = Physics.OverlapSphere(transform.position + (meshT.forward.normalized * 1.5f), 1).ToList();
+            TryGetComponent(out Collider myCol);
 
-            // Only apply damage if a IDamagable component is found
-            if (targetDmg != null)
-                targetDmg.Damage(damage);
+            // Exclude this character's collider if found within the list
+            if (hitColliders.Contains(myCol))
+                hitColliders.Remove(myCol);
+
+            // For each target found, apply damage to it using the IDamagable interface
+            foreach (Collider target in hitColliders)
+            {
+                // Cache the target's IDamagable interface
+                target.TryGetComponent(out IDamagable targetDmg);
+
+                // Only apply damage if a IDamagable component is found
+                if (targetDmg != null)
+                    targetDmg.Damage(damage);
+            }
         }
     }
     void Start_Attack() => _handler.SetValue("B_Attacking", true);
     void Stop_Attack() => _handler.SetValue("B_Attacking", false);
+    void Start_Combat() { }
+    void Stop_Combat() { }
 
     #endregion
 

@@ -12,13 +12,14 @@ namespace Brad.Character
     {
         #region Private variables
 
-        public LayerMask proximityMask;
-
-        private float viewConeFov = 60f;
-        private float viewConeMaxDistance = 5f;
+        [Header("View Cone")]
+        public float viewConeFov = 60f;
+        public float viewConeRange = 5f;
         public List<Collider> targetsInView;
 
-        private float proximityRange = 10f;
+        [Header("Proximity Sphere")]
+        public LayerMask proximityMask;
+        public float proximityRange = 10f;
         public List<Collider> targetsInProximity;
 
         IEventAndDataHandler _handler;
@@ -69,7 +70,7 @@ namespace Brad.Character
                 Gizmos.color = Color.yellow;
                 #region Draw view cone
                 float totalFOV = viewConeFov;
-                float rayRange = viewConeMaxDistance;
+                float rayRange = viewConeRange;
                 Quaternion leftRayRotation = Quaternion.AngleAxis(-totalFOV, Vector3.up);
                 Quaternion rightRayRotation = Quaternion.AngleAxis(totalFOV, Vector3.up);
                 Vector3 leftRayDirection = leftRayRotation * meshT.forward;
@@ -77,7 +78,7 @@ namespace Brad.Character
                 Gizmos.DrawRay(transform.position, leftRayDirection * rayRange);
                 Gizmos.DrawRay(transform.position, rightRayDirection * rayRange);
                 Handles.color = Color.yellow;
-                UnityEditor.Handles.DrawWireArc(transform.position, transform.up, leftRayDirection, viewConeFov * 2, viewConeMaxDistance);
+                UnityEditor.Handles.DrawWireArc(transform.position, transform.up, leftRayDirection, viewConeFov * 2, viewConeRange);
                 #endregion
                 Gizmos.color = Color.red;
                 if (FindClosestTargetInView() != null && targetsInProximity.Count > 0)
@@ -128,7 +129,7 @@ namespace Brad.Character
                     float angle = Vector3.Angle(targetDir, meshT.forward);
                     float distance = Vector3.Distance(transform.position, c.transform.position);
 
-                    if (angle < viewConeFov && distance < viewConeMaxDistance)
+                    if (angle < viewConeFov && distance < viewConeRange)
                     {
                         Physics.Raycast(transform.position + targetDir * .51f, targetDir, out RaycastHit hit, distance);
                         if (hit.collider == c)

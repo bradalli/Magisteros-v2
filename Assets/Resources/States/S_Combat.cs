@@ -32,9 +32,11 @@ public class S_Combat : BaseState
         fsMachine.transform.TryGetComponent(out myDmg);
         target = _handler.GetValue<Transform>("T_ClosestThreatInView");
 
+        //_handler.SetValue("T_LookTarget", target);
+        _handler.SetValue("T_FollowTarget", target);
 
         _handler.TriggerEvent("Start_Move");
-        _handler.TriggerEvent("Start_LookAt");
+        //_handler.TriggerEvent("Start_LookAt");
         _handler.TriggerEvent("Start_Combat");
     }
 
@@ -81,29 +83,31 @@ public class S_Combat : BaseState
         #endregion
 
         // Change target if closest threat has changed.
-        target = _handler.GetValue<Transform>("T_ClosestThreatInView");
+        Transform tmpTarget = _handler.GetValue<Transform>("T_ClosestThreatInView");
+        if(target != tmpTarget)
+        {
+            _handler.SetValue("T_LookTarget", target);
+            _handler.SetValue("T_FollowTarget", target);
+            target = tmpTarget;
+        }
 
         if (target != null)
         {
-            if (!_handler.GetValue<bool>("B_Attacking"))
+            if (Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
             {
-                _handler.TriggerEvent("Stop_Move");
-
-                if(!attacking && Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
+                if (!_handler.GetValue<bool>("B_Attacking") && (Time.time - lastAttackTime) > _attackDelay)
                 {
-                    if((Time.time - lastAttackTime) > _attackDelay && !attacking)
-                    {
-                        _handler.TriggerEvent("Start_Attack");
-                        lastAttackTime = Time.time;
-                        return;
-                    }
+                    _handler.TriggerEvent("Stop_Move");
+                    _handler.TriggerEvent("Start_Attack");
+                    return;
                 }
             }
 
-            else
+            else if (!_handler.GetValue<bool>("B_Moving"))
             {
+                lastAttackTime = Time.time;
                 _handler.TriggerEvent("Start_Move");
-                attacking = false;
+                //_handler.TriggerEvent("Start_LookAt");
             }
         }
     }
@@ -111,7 +115,7 @@ public class S_Combat : BaseState
     public override void Exit()
     {
         _handler.TriggerEvent("Stop_Move");
-        _handler.TriggerEvent("Stop_LookAt");
+        //_handler.TriggerEvent("Stop_LookAt");
         _handler.TriggerEvent("Stop_Combat");
         base.Exit();
     }
