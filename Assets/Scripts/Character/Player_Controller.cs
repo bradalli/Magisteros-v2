@@ -96,7 +96,7 @@ namespace Brad.Character
             moveVector = new Vector3(moveVector.x, 0, moveVector.z);
 
             if (navAgent)
-                navAgent.Move(moveVector * navAgent.speed * Time.deltaTime);
+                navAgent.SetDestination(transform.position + moveVector);
 
             handler.SetValue("V_Velocity", moveVector * navAgent.speed);
 
