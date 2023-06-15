@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class S_Combat : BaseState
 {
@@ -114,7 +115,7 @@ public class S_Combat : BaseState
 
     void SetLastAttackTime()
     {
-        lastAttackTime = Time.time;
+        lastAttackTime = Time.time + Random.Range(0, .25f);
     }
 
     public override void Exit()

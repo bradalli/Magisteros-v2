@@ -10,6 +10,8 @@ namespace Brad.Character
     {
         public static Player_Controller Instance;
 
+        bool dead = false;
+
         [SerializeField] int maxHealth = 100;
         [SerializeField] int health;
 
@@ -61,6 +63,32 @@ namespace Brad.Character
 
         private void Update()
         {
+
+
+            if (!dead)
+            {
+                Move();
+                Attack();
+            }
+
+            if(!dead && health <= 0)
+            {
+                DisableC();
+                handler.TriggerEvent("Die");
+                dead = true;
+            }
+        }
+
+        void Attack()
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                handler.TriggerEvent("Start_Attack");
+            }
+        }
+
+        void Move()
+        {
             Vector3 forwardVector = Camera.main.transform.forward * Input.GetAxis("Vertical");
             Vector3 rightVector = Camera.main.transform.right * Input.GetAxis("Horizontal");
 
@@ -72,13 +100,30 @@ namespace Brad.Character
 
             handler.SetValue("V_Velocity", moveVector * navAgent.speed);
 
-            Vector3 targetLookDir = Vector3.RotateTowards(meshT.forward, moveVector, 
+            Vector3 targetLookDir = Vector3.RotateTowards(meshT.forward, moveVector,
                 lookSpeed * Time.deltaTime, 0);
             meshT.rotation = Quaternion.LookRotation(targetLookDir, meshT.up);
+        }
 
-            if (Input.GetButtonDown("Fire1"))
+        void EnableNPC()
+        {
+            foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
             {
-                handler.TriggerEvent("Start_Attack");
+                if (comp != this)
+                {
+                    comp.enabled = true;
+                }
+            }
+        }
+
+        void DisableC()
+        {
+            foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
+            {
+                if (comp != this)
+                {
+                    comp.enabled = false;
+                }
             }
         }
     }

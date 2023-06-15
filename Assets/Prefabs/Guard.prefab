@@ -88,7 +88,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: {fileID: 0}
-  so_Attributes: {fileID: 11400000, guid: 504f61119036b084a96ca2b873c3194d, type: 2}
+  so_Attributes: {fileID: 11400000, guid: 1db64244b0325644192e3c4db81ba744, type: 2}
   maxHealth: 100
   health: 0
   dataList: []

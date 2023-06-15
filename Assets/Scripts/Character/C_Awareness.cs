@@ -109,9 +109,12 @@ namespace Brad.Character
 
             // Only add characters if they are unobstructed via a raycast.
             List<Collider> tmpUnobstructedTsInProx = new List<Collider>();
-            foreach(Collider c in tmpFoundTargetsInProx)
+            foreach (Collider c in tmpFoundTargetsInProx)
             {
-                tmpUnobstructedTsInProx.Add(c);
+                IDamagable cDmg = c.gameObject.GetComponent<IDamagable>();
+
+                if (c.gameObject != gameObject && cDmg.Health > 0)
+                    tmpUnobstructedTsInProx.Add(c);
             }
 
             return tmpUnobstructedTsInProx;
