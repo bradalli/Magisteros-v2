@@ -4,5 +4,32 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/Arena_Section.unity
+    guid: ce03699511a47b646b3252b4e3a8763d
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/B-F_Connector.unity
+    guid: 986bef30ae7dca54e92f6cfcb36c3674
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/Beach_Section.unity
+    guid: 43a1db36307b2e54f807edc49a2d125e
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/Camp_Section.unity
+    guid: a87cda5b15a8a0440bc251f3a7c3e8f1
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/F-A_Connector.unity
+    guid: ddc32b7ba5fdd5f4c9a72c9c8c3158b5
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/F-C_Connector.unity
+    guid: daab1c140faf4c0429bf546854b3059a
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/F-V_Connector.unity
+    guid: c4ac021a3eb7c4147ab4e4f27100491e
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/Forest_Section.unity
+    guid: 6600017eb75e16b48bd474662c2e3219
+  - enabled: 1
+    path: Assets/Scenes/CompoScene/Village_Section.unity
+    guid: df51e903de63b134ab76efb5f59e3e5f
   m_configObjects: {}
