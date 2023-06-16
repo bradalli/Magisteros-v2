@@ -7,11 +7,16 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager instance;
-    [SerializeField] bool loading, unloading;
+    public bool loading, unloading;
 
     private void Awake()
     {
         instance = this;
+
+        if(SceneManager.GetActiveScene().name == "MasterScene")
+        {
+            LoadScenesAdditive(new string[] {"Beach_Section", "B-F_Connector"});
+        }
     }
 
     public void LoadScenesAdditive(string[] scenes)
@@ -24,6 +29,11 @@ public class LevelManager : MonoBehaviour
     {
         if(!unloading)
             StartCoroutine(UnloadingScenes(scenes));
+    }
+
+    public void SwitchToScene(string scene)
+    {
+        StartCoroutine(SwitchingToScene(scene));
     }
 
     IEnumerator LoadingScenesAdditive(string[] scenes)
@@ -71,5 +81,11 @@ public class LevelManager : MonoBehaviour
         }
 
         unloading = false;
+    }
+
+    IEnumerator SwitchingToScene(string scene)
+    {
+        AsyncOperation loadingState = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
+        yield return new WaitUntil(() => loadingState.isDone);
     }
 }
