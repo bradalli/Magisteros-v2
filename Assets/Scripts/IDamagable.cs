@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,15 @@ public interface IDamagable
 
     public void Damage(int damage)
     {
-        if(!IsHealthDepleted())
+        if (!IsHealthDepleted())
+        {
             Health -= damage;
+            DamageReceived();
+        }
     }
+
+    void DamageReceived();
+
     public void Heal(int heal)
     {
         if (!IsHealthDepleted())

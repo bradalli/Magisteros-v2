@@ -23,6 +23,7 @@ namespace Brad.Character
         public Dictionary<string, object> data;
         [HideInInspector]
         public Dictionary<string, Action> events;
+        public Action damageReceived;
 
         // Stats
         public int maxHealth = 100;
@@ -64,7 +65,7 @@ namespace Brad.Character
             #region State initialisation
 
             if (handler != null)
-            {;
+            {
                 for(int i = 0; i < so_Attributes.attributes.Length; i++)
                 {
                     SO_C_Attributes.Attribute tmpAttribute = so_Attributes.attributes[i];
@@ -101,16 +102,35 @@ namespace Brad.Character
 
                 #region Event initialisation
 
+                handler.SetValue("I_MaxHealth", maxHealth);
                 handler.SetValue("T_Mesh", transform.GetChild(0));
                 //handler.AddEvent("Next_State", NextState);
                 handler.AddEvent("Enable_C", EnableNPC);
                 handler.AddEvent("Disable_C", DisableNPC);
                 handler.AddEvent("Set_B_InRangeOfPlayer", Set_InRangeOfPlayer);
+                handler.AddEvent("DamageReceived", UpdateHealthValue);
 
                 EnableNPC();
+                UpdateHealthValue();
 
                 #endregion
             }
+        }
+
+        private void Start()
+        {
+            Invoke("UpdateVariables", .1f);
+            Invoke("StartFSM", .1f);
+        }
+
+        public void DamageReceived()
+        {
+            handler.TriggerEvent("DamageReceived");
+        }
+
+        void UpdateHealthValue()
+        {
+            handler.SetValue("I_Health", health);
         }
 
         void UpdateLists()

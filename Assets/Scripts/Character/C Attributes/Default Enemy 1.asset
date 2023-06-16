@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c82163c1687da944a0565aa86397b5a, type: 3}
-  m_Name: Default Enemy
+  m_Name: Default Enemy 1
   m_EditorClassIdentifier: 
   attributes:
   - name: I_MaxFearLevel
@@ -30,7 +30,7 @@ MonoBehaviour:
 '
   - name: I_Damage
     type: 2
-    value: 25
+    value: 15
     description: 'How much damage this character can deal.
 
 

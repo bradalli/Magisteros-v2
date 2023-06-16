@@ -9,6 +9,11 @@ public interface IEventAndDataHandler
     public Dictionary<string, object> DataDictionary { get; set; }
     public Dictionary<string, Action> EventDictionary { get; set; }
 
+    public void PrintEvents()
+    {
+
+    }
+
     public void SetValue<T>(string key, T value)
     {
         if (DataDictionary.ContainsKey(key))

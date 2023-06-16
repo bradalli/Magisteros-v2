@@ -37,6 +37,7 @@ namespace Brad.Character
 
         public Dictionary<string, object> data;
         public Dictionary<string, Action> events;
+        public Action damageReceived;
         public Dictionary<string, object> DataDictionary { get => data; set => data = value; }
         public Dictionary<string, Action> EventDictionary { get => events; set => events = value; }
         #endregion
@@ -54,8 +55,13 @@ namespace Brad.Character
             anim = GetComponentInChildren<Animator>();
             meshT = transform.Find("Player_Mesh");
 
+            handler.SetValue("I_MaxHealth", maxHealth);
             handler.SetValue("T_Mesh", meshT);
             handler.SetValue("I_Damage", damage);
+            handler.AddEvent("DamageReceived", damageReceived);
+            handler.AddEvent("DamageReceived", UpdateHealthValue);
+
+            UpdateHealthValue();
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -63,8 +69,6 @@ namespace Brad.Character
 
         private void Update()
         {
-
-
             if (!dead)
             {
                 Move();
@@ -79,11 +83,17 @@ namespace Brad.Character
             }
         }
 
+        void UpdateHealthValue()
+        {
+            handler.SetValue("I_Health", health);
+        }
+
         void Attack()
         {
             if (Input.GetButtonDown("Fire1"))
             {
-                handler.TriggerEvent("Start_Attack");
+                if(!handler.GetValue<bool>("B_Attacking"))
+                    handler.TriggerEvent("Start_Attack");
             }
         }
 
@@ -125,6 +135,11 @@ namespace Brad.Character
                     comp.enabled = false;
                 }
             }
+        }
+
+        void IDamagable.DamageReceived()
+        {
+            handler.TriggerEvent("DamageReceived");
         }
     }
 }
