@@ -370,9 +370,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de836ef9435cc7d4995dcff797209565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currGameState: 0
+  paused: 0
   mainMenuSceneName: 
   playerSceneName: 
   startGameScenes: []
+  startPauseMenu:
+    m_PersistentCalls:
+      m_Calls: []
+  stopPauseMenu:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &87108126
 GameObject:
   m_ObjectHideFlags: 0
@@ -2159,11 +2167,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de836ef9435cc7d4995dcff797209565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currGameState: 0
+  paused: 0
   mainMenuSceneName: MainMenu
   playerSceneName: MasterScene
   startGameScenes:
   - Beach_Section
   - B-F_Connector
+  startPauseMenu:
+    m_PersistentCalls:
+      m_Calls: []
+  stopPauseMenu:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &185024655
 Transform:
   m_ObjectHideFlags: 0
@@ -7391,7 +7407,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 185024654}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartGameFromMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

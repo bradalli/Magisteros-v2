@@ -25,7 +25,7 @@ public class SO_C_Attributes : ScriptableObject
     public struct State
     {
         public string name;
-        public MonoScript stateClass;
+        public Object stateClass;
     }
 
     public Attribute[] attributes;

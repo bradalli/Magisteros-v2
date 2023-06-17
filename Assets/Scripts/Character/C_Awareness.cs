@@ -77,8 +77,8 @@ namespace Brad.Character
                 Vector3 rightRayDirection = rightRayRotation * meshT.forward;
                 Gizmos.DrawRay(transform.position, leftRayDirection * rayRange);
                 Gizmos.DrawRay(transform.position, rightRayDirection * rayRange);
-                Handles.color = Color.yellow;
-                UnityEditor.Handles.DrawWireArc(transform.position, transform.up, leftRayDirection, viewConeFov * 2, viewConeRange);
+                //Handles.color = Color.yellow;
+                //UnityEditor.Handles.DrawWireArc(transform.position, transform.up, leftRayDirection, viewConeFov * 2, viewConeRange);
                 #endregion
                 Gizmos.color = Color.red;
                 if (FindClosestTargetInView() != null && targetsInProximity.Count > 0)

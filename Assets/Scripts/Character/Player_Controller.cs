@@ -11,6 +11,7 @@ namespace Brad.Character
         public static Player_Controller Instance;
 
         bool dead = false;
+        bool playerControl = true;
 
         [SerializeField] int maxHealth = 100;
         [SerializeField] int health;
@@ -69,7 +70,7 @@ namespace Brad.Character
 
         private void Update()
         {
-            if (!dead)
+            if (!dead && playerControl)
             {
                 Move();
                 Attack();
@@ -115,8 +116,9 @@ namespace Brad.Character
             meshT.rotation = Quaternion.LookRotation(targetLookDir, meshT.up);
         }
 
-        void EnableNPC()
+        public void EnableNPC()
         {
+            playerControl = true;
             foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
             {
                 if (comp != this)
@@ -126,8 +128,9 @@ namespace Brad.Character
             }
         }
 
-        void DisableC()
+        public void DisableC()
         {
+            playerControl = false;
             foreach (Behaviour comp in gameObject.GetComponents<Behaviour>())
             {
                 if (comp != this)

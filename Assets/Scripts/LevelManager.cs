@@ -12,11 +12,6 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-
-        if(SceneManager.GetActiveScene().name == "MasterScene")
-        {
-            LoadScenesAdditive(new string[] {"Beach_Section", "B-F_Connector"});
-        }
     }
 
     public void LoadScenesAdditive(string[] scenes)

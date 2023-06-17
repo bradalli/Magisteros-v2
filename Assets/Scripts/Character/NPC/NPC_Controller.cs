@@ -88,7 +88,7 @@ namespace Brad.Character
 
                 foreach (SO_C_Attributes.State state in so_Attributes.states)
                 {
-                    BaseState stateInstance = (BaseState)ScriptableObject.CreateInstance(state.stateClass.GetClass());
+                    BaseState stateInstance = (BaseState)ScriptableObject.CreateInstance(state.stateClass.name);
                     stateInstance.SetValues(state.name, this);
 
                     handler.SetValue($"State_{state.name}", stateInstance);
