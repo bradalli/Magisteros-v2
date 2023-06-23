@@ -23,7 +23,7 @@ public class SetSliderValue : MonoBehaviour
 
             if (targHandler != null)
             {
-                Debug.Log(targHandler);
+                //Debug.Log(targHandler);
                 targHandler.AddEvent(updateEventKey, UpdateSlider);
             }
         }

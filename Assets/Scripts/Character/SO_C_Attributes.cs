@@ -7,7 +7,8 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "Character Attributes", menuName = "Character/Character Attributes", order = 1)]
+[CreateAssetMenu(fileName = "Character Attributes", 
+    menuName = "Character/Character Attributes", order = 1)]
 public class SO_C_Attributes : ScriptableObject
 {
     [System.Serializable]

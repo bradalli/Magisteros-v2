@@ -1,9 +1,5 @@
-using Brad.Character;
 using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class S_Search : BaseState
 {
@@ -17,12 +13,6 @@ public class S_Search : BaseState
     float searchRange = 20f;
     Vector3 searchPosition;
 
-    //int sampleAttempts = 0;
-    /*
-    public S_Search(StateMachine stateMachine) : base("Search", stateMachine)
-    {
-        _cont = stateMachine;
-    }*/
 
     public override void Enter()
     {
@@ -68,7 +58,6 @@ public class S_Search : BaseState
         }
         #endregion
 
-        //Debug.Log(_cont.Get_RemainingNavDistance());
         if(!_handler.GetValue<bool>("B_ViewContainsThreat") && _handler.GetValue<bool>("B_DestinationReach"))
         {
             // Find a random position within the searchRange and sample it from the nav mesh.
@@ -85,27 +74,6 @@ public class S_Search : BaseState
 
     void SetNavPosition(Vector3 desiredPosition)
     {
-        /*
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(desiredPosition, out hit, 10f, NavMesh.AllAreas))
-        {
-            searchPosition = hit.position;
-            _cont.Set_NavDestination(searchPosition);
-            sampleAttempts = 0;
-        }
-
-        else
-        {
-            Debug.LogError("Navmesh not found in sample attempt");
-            sampleAttempts++;
-
-            if (sampleAttempts < 100)
-                SetNavPosition(desiredPosition);
-
-            else
-                Debug.LogError("NavMesh sample attempts limit reached");
-        }*/
-        //_cont.Set_NavDestination(desiredPosition);
         _handler.SetValue("V_Destination", desiredPosition);
     }
 }

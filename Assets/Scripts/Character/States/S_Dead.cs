@@ -1,18 +1,15 @@
-using Brad.Character;
 using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class S_Dead : BaseState
 {
+    #region Private Variables
+
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
-    /*
-    public S_Dead(StateMachine stateMachine) : base("Dead", stateMachine)
-    {
-        _cont = stateMachine;
-    }*/
+
+    #endregion
+
+    #region State Methods
 
     public override void Enter()
     {
@@ -24,5 +21,7 @@ public class S_Dead : BaseState
         _handler.TriggerEvent("Die");
         _handler.TriggerEvent("Disable_C");
     }
+
+    #endregion
 }
 

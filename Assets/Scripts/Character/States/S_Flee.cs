@@ -1,61 +1,60 @@
-using Brad.Character;
 using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class S_Flee : BaseState
 {
+    #region Private Variables
+
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
     private Vector3 fleeDirection;
     IDamagable myDmg;
-    /*
-    public S_Flee(NPC_Controller stateMachine) : base("Flee", stateMachine)
-    {
-        _cont = stateMachine;
-    }*/
+
+    #endregion
+
+    #region State Methods
 
     public override void Enter()
     {
+        // Cache components
         _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
-        base.Enter();
+        _cont.transform.TryGetComponent(out myDmg);
 
-        // Work out target flee direction
+        // Calculate target flee direction
         fleeDirection = (_cont.transform.position - _handler.GetValue<Vector3>("V_ProxThreatsAvgPosition")).normalized;
         _handler.TriggerEvent("Start_Move");
 
-        _cont.transform.TryGetComponent(out myDmg);
+        base.Enter();
     }
 
     public override void UpdateState()
     {
         #region Transitions
-        // -> Despawn
+        // -> Despawn (Despawn when out of range to the player)
         if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
             _cont.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
-        // -> Dead
+        // -> Dead (If health is depleted)
         if (myDmg != null)
         {
-            if (myDmg.Health == 0)
+            if (myDmg.IsHealthDepleted())
             {
                 _cont.ChangeState(_handler.GetValue<BaseState>("State_Dead"));
             }
         }
 
-        // -> Idle
+        // -> Idle (If proximity no longer contains a threat)
         if (!_handler.GetValue<bool>("B_ProxContainsThreat"))
         {
             _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
 
-        // -> Combat
+        // -> Combat (If fear level exceeds max)
         if (!_handler.GetValue<bool>("B_IsFearful"))
         {
             _cont.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
@@ -63,6 +62,7 @@ public class S_Flee : BaseState
         }
         #endregion
 
+        // Update flee direction
         fleeDirection = (_cont.transform.position - _handler.GetValue<Vector3>("V_ProxThreatsAvgPosition")).normalized;
         Vector3 fleePosition = _cont.transform.position + (fleeDirection * _handler.GetValue<float>("F_FleeDistance"));
         _handler.SetValue("V_Destination", fleePosition);
@@ -73,5 +73,7 @@ public class S_Flee : BaseState
         _handler.TriggerEvent("Stop_Move");
         base.Exit();
     }
+
+    #endregion
 }
 

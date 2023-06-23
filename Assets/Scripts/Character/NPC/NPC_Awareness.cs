@@ -123,7 +123,7 @@ namespace Brad.Character
                     }
                 }
             }
-            Debug.Log(type.ToString() + ": " + typeNum);
+            //Debug.Log(type.ToString() + ": " + typeNum);
             return typeNum;
         }
         Transform ClosestTypeInList(targetType type, List<Collider> list)

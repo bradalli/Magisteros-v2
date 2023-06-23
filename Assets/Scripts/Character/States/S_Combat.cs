@@ -1,36 +1,29 @@
-using Brad.Character;
 using Brad.FSM;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class S_Combat : BaseState
 {
+    #region Private Variables
+
     StateMachine fsMachine;
     private IEventAndDataHandler _handler;
-    IDamagable myDmg, targetDmg;
+    IDamagable myDmg;
     Transform target;
     float _attackDistance = 2f;
     float _attackDelay = 0.5f;
-
-    bool attacking;
     float lastAttackTime;
-    float startTargetLost;
-    /*
-    public S_Combat(StateMachine stateMachine) : base("Combat", stateMachine)
-    {
-        fsMachine = stateMachine;
-    }*/
+
+    #endregion
+
+    #region State methods
 
     public override void Enter()
     {
         fsMachine = stateMachine;
         fsMachine.TryGetComponent(out _handler);
-        base.Enter();
-
         fsMachine.transform.TryGetComponent(out myDmg);
+        
         target = _handler.GetValue<Transform>("T_ClosestThreatInView");
 
         _handler.SetValue("T_LookTarget", target);
@@ -41,42 +34,44 @@ public class S_Combat : BaseState
         _handler.TriggerEvent("Start_Combat");
 
         _handler.AddEvent("Stop_Attack", SetLastAttackTime);
+
+        base.Enter();
     }
 
     public override void UpdateState()
     {
         #region Transitions
-        // -> Despawn
+        // -> Despawn (Despawn when out of range to the player)
         if (!_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
             fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Despawn"));
             return;
         }
 
-        // -> Dead
+        // -> Dead (Die when health reaches zero or less than zero)
         if (myDmg != null)
         {
-            if (myDmg.Health <= 0)
+            if (myDmg.IsHealthDepleted())
             {
                 fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Dead"));
             }
         }
         
-        // -> Idle
-        if (!_handler.GetValue<bool>("B_ProxContainsThreat")) // Need to change this to when all threats are dead
+        // -> Idle (Go idle when proximity no longer contains a threat)
+        if (!_handler.GetValue<bool>("B_ProxContainsThreat"))
         {
             fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Idle"));
             return;
         }
 
-        // -> Flee
+        // -> Flee (Go flee if fear level reaches or exceeds max fear)
         if(_handler.GetValue<bool>("B_IsFearful"))
         {
             fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Flee"));
             return;
         }
 
-        // -> Search
+        // -> Search (Go search if view no longer contains threat)
         if(!_handler.GetValue<bool>("B_ViewContainsThreat"))
         {
             fsMachine.ChangeState(_handler.GetValue<BaseState>("State_Search"));
@@ -96,6 +91,7 @@ public class S_Combat : BaseState
 
         if (target != null)
         {
+            // Only attack if target is within attackDistance AND attackDelay has elapsed since Last Attack AND character isn't currently attacking
             if (Vector3.Distance(fsMachine.transform.position, target.transform.position) < _attackDistance)
             {
                 if ((Time.time - lastAttackTime) > _attackDelay && !_handler.GetValue<bool>("B_Attacking"))
@@ -105,27 +101,36 @@ public class S_Combat : BaseState
                 }
             }
 
+            // If previous is false AND character is not moving AND character is not attacking
             else if (!_handler.GetValue<bool>("B_Moving") && !_handler.GetValue<bool>("B_Attacking"))
             {
                 _handler.TriggerEvent("Start_Move");
-                //_handler.TriggerEvent("Start_LookAt");
             }
         }
     }
 
-    void SetLastAttackTime()
-    {
-        lastAttackTime = Time.time + Random.Range(0, .25f);
-    }
-
     public override void Exit()
     {
+        // Reset events and variables
         _handler.RemoveEvent("Stop_Attack", SetLastAttackTime);
         _handler.TriggerEvent("Stop_Move");
         _handler.TriggerEvent("Stop_LookAt");
         _handler.TriggerEvent("Stop_Combat");
         _handler.SetValue<Transform>("T_FollowTarget", null);
         _handler.SetValue<Transform>("T_LookTarget", null);
+
         base.Exit();
     }
+
+    #endregion
+
+    #region Custom methods
+
+    void SetLastAttackTime()
+    {
+        // Set last attack time to current time with an added random variation
+        lastAttackTime = Time.time + Random.Range(0, .25f);
+    }
+
+    #endregion
 }

@@ -1,27 +1,27 @@
-using Brad.Character;
 using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class S_Idle : BaseState
 {
+    #region Private Variables
+
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
-    /*
-    public S_Idle(NPC_Controller stateMachine) : base("Idle", stateMachine)
-    {
-        _cont = stateMachine;
-    }*/
+
+    #endregion
+
+    #region State Methods
 
     public override void Enter()
     {
+        // Cache components
         _cont = stateMachine;
         _cont.TryGetComponent(out _handler);
-        base.Enter();
-
+        
+        // Trigger events
         _handler.TriggerEvent("Stop_Move");
         _handler.TriggerEvent("Stop_LookAt");
+
+        base.Enter();
     }
 
     public override void UpdateState()
@@ -39,15 +39,7 @@ public class S_Idle : BaseState
         {
             _cont.ChangeState(_handler.GetValue<BaseState>("State_Alert"));
             return;
-        } // Need to add function for other allies in proximity to warn this npc.
-
-        // -> Perform
-        /* NOT PLANNING ON IMPLEMENTING AT THIS TIME (12.06.2023)
-        if(_cont.Get_CurrAction() != null)
-        {
-            _cont.ChangeState(_cont.performState);
-            return;
-        }*/
+        } // !!REMINDER!! - Need to add function for other allies in proximity to warn this npc.
 
         // -> Move
         if (_handler.GetValue<Waypoint>("W_CurrWp") != null)
@@ -62,5 +54,7 @@ public class S_Idle : BaseState
     {
         base.Exit();
     }
+
+    #endregion
 }
 

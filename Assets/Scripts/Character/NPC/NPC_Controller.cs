@@ -9,6 +9,7 @@ using UnityEngine;
 using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 using Object = UnityEngine.Object;
 using StateMachine = Brad.FSM.StateMachine;
+using UnityEngine.Profiling;
 
 namespace Brad.Character
 {
@@ -53,6 +54,8 @@ namespace Brad.Character
 
         private void OnEnable()
         {
+            Profiler.BeginSample("NPC_Cont-OnEnable()");
+
             TryGetComponent(out handler);
             TryGetComponent(out damage);
 
@@ -115,6 +118,8 @@ namespace Brad.Character
 
                 #endregion
             }
+
+            Profiler.EndSample();
         }
 
         private void Start()

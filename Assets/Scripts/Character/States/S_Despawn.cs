@@ -1,24 +1,19 @@
-using Brad.Character;
 using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class S_Despawn : BaseState
 {
+    #region Private Variables
+
     private StateMachine _cont;
     IEventAndDataHandler _handler;
-    /*
-    public S_Despawn(NPC_Controller stateMachine) : base("Spawn", stateMachine)
-    {
-        _cont = stateMachine;
-    }*/
+
+    #endregion
 
     #region State methods
     public override void Enter()
     {
         _cont = stateMachine;
-        _cont.TryGetComponent<IEventAndDataHandler>(out _handler);
+        _cont.TryGetComponent(out _handler);
         base.Enter();
         _handler.TriggerEvent("Disable_C");
     }
