@@ -1,21 +1,22 @@
-using Brad.Character;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.XR;
 
 namespace Brad.Character
 {
     public class NPC_Awareness : C_Awareness
     {
         #region Private variables
+
         IEventAndDataHandler _handler;
 
-        // How many threats needed to make this npc flee (If set to 0, the npc will never enter combat).
-        int maxFearLevel = 5;
         // The distance at which this npc will disable itself.
         float maxDistToPlayer = 50;
+
+        #endregion
+
+        #region Public Variables
+
+        public enum targetType { Ally, Threat }
 
         #endregion
 
@@ -90,7 +91,6 @@ namespace Brad.Character
         void Get_MaxDistToPlayer() => _handler.GetValue<float>("F_MaxDistToPlayer");
 
         #endregion
-        public enum targetType { Ally, Threat }
         
         bool IsNpcFearful()
         {
@@ -99,7 +99,6 @@ namespace Brad.Character
                 - (NumberOfTypeInList(targetType.Ally, targetsInProximity));
             return fearLevel >= _handler.GetValue<int>("I_MaxFearLevel");
         }
-
         int NumberOfTypeInList(targetType type, List<Collider> list)
         {
             // Finds how many are within the proximity/view.
@@ -123,7 +122,7 @@ namespace Brad.Character
                     }
                 }
             }
-            //Debug.Log(type.ToString() + ": " + typeNum);
+
             return typeNum;
         }
         Transform ClosestTypeInList(targetType type, List<Collider> list)

@@ -1,6 +1,3 @@
-using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Brad.FSM
@@ -8,14 +5,6 @@ namespace Brad.FSM
     public class StateMachine : MonoBehaviour
     {
         public BaseState currentState;
-
-        /*
-        void Start()
-        {
-            currentState = GetInitialState();
-            if (currentState != null)
-                currentState.Enter();
-        }*/
 
         public void Update()
         {
@@ -36,10 +25,14 @@ namespace Brad.FSM
             return null;
         }
 
+#if UNITY_EDITOR
+
         private void OnGUI()
-        {/*
+        {
             string content = currentState != null ? currentState.name : "(no current state)";
-            GUILayout.Label($"<color='black'><size=40>{content}</size></color>");*/
+            GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
         }
+
+#endif
     }
 }

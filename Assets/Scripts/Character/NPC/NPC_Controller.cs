@@ -1,13 +1,8 @@
 using Brad.FSM;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
-using Object = UnityEngine.Object;
 using StateMachine = Brad.FSM.StateMachine;
 using UnityEngine.Profiling;
 
@@ -44,32 +39,24 @@ namespace Brad.Character
 
         #endregion
 
-        #region Private Variables
-
-        // Components
-
-        #endregion
-
         #region MonoBehaviour
 
         private void OnEnable()
         {
             Profiler.BeginSample("NPC_Cont-OnEnable()");
 
+            // Cache components
             TryGetComponent(out handler);
             TryGetComponent(out damage);
 
+            // Cache handler dictionaries
             handler.EventDictionary = new Dictionary<string, Action>();
             handler.DataDictionary = new Dictionary<string, object>();
 
-            damage.ResetHealth();
-
-            // NPC
-            #region State initialisation
-
             if (handler != null)
             {
-                for(int i = 0; i < so_Attributes.attributes.Length; i++)
+                #region State and attributes initialisation
+                for (int i = 0; i < so_Attributes.attributes.Length; i++)
                 {
                     SO_C_Attributes.Attribute tmpAttribute = so_Attributes.attributes[i];
 
@@ -100,23 +87,20 @@ namespace Brad.Character
                 #endregion
 
                 #region Data initialisation
-
+                handler.SetValue("I_MaxHealth", maxHealth);
+                handler.SetValue("T_Mesh", transform.GetChild(0));
                 #endregion
 
                 #region Event initialisation
-
-                handler.SetValue("I_MaxHealth", maxHealth);
-                handler.SetValue("T_Mesh", transform.GetChild(0));
-                //handler.AddEvent("Next_State", NextState);
                 handler.AddEvent("Enable_C", EnableNPC);
                 handler.AddEvent("Disable_C", DisableNPC);
                 handler.AddEvent("Set_B_InRangeOfPlayer", Set_InRangeOfPlayer);
                 handler.AddEvent("DamageReceived", UpdateHealthValue);
+                #endregion
 
                 EnableNPC();
                 UpdateHealthValue();
-
-                #endregion
+                damage.ResetHealth();
             }
 
             Profiler.EndSample();
@@ -128,34 +112,8 @@ namespace Brad.Character
             Invoke("StartFSM", .1f);
         }
 
-        public void DamageReceived()
-        {
-            handler.TriggerEvent("DamageReceived");
-        }
-
-        void UpdateHealthValue()
-        {
-            handler.SetValue("I_Health", health);
-        }
-
-        void UpdateLists()
-        {
-            dataList = new List<DictionaryValue>();
-            eventsList = new List<DictionaryValue>();
-
-            for (int i = 0; i < data.Count; i++)
-            {
-                DictionaryValue val = new DictionaryValue { key = handler.DataDictionary.ElementAt(i).Key, value = handler.DataDictionary.ElementAt(i).Value.ToString() };
-                dataList.Add(val);
-            }
-
-            for (int i = 0; i < events.Count; i++)
-            {
-                DictionaryValue val = new DictionaryValue { key = handler.EventDictionary.ElementAt(i).Key, value = handler.EventDictionary.ElementAt(i).Value.ToString() };
-                eventsList.Add(val);
-            }
-        }
-
+        public void DamageReceived() => handler.TriggerEvent("DamageReceived");
+        void UpdateHealthValue() => handler.SetValue("I_Health", health);
         void UpdateVariables()
         {
             // Trigger all events that call to "set" or "get" a data variable
@@ -205,24 +163,13 @@ namespace Brad.Character
             }
         }
 
-        new void Update()
-        {
-            base.Update();
-            
-            if (Input.GetKeyDown(KeyCode.P))
-                StartFSM();
-
-            if (Input.GetKeyDown(KeyCode.U))
-                UpdateVariables();
-        }
-
         #endregion
 
         #region Custom Methods
 
         void StartFSM()
         {
-            currentState = GetInitialState();
+            currentState = handler.GetValue<BaseState>("State_Spawn");
             if (currentState != null)
                 currentState.Enter();
         }
@@ -260,13 +207,6 @@ namespace Brad.Character
 
         #endregion
 
-        #endregion
-
-        #region FSM Methods
-        protected override BaseState GetInitialState()
-        {
-            return handler.GetValue<BaseState>("State_Spawn");
-        }
         #endregion
     }
 }
