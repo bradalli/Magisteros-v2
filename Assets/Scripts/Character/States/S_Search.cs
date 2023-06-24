@@ -3,16 +3,19 @@ using UnityEngine;
 
 public class S_Search : BaseState
 {
+    #region Private Variables
+
     private StateMachine _cont;
     private IEventAndDataHandler _handler;
 
     Vector3 startPosition;
+    float searchRange = 20f;
     float searchTimeLength = 20f;
     float enterTime;
 
-    float searchRange = 20f;
-    Vector3 searchPosition;
+    #endregion
 
+    #region State Methods
 
     public override void Enter()
     {
@@ -26,9 +29,8 @@ public class S_Search : BaseState
 
         _handler.TriggerEvent("Start_Move");
 
-        // Find a random position within the searchRange and sample it from the nav mesh.
-        Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
-        SetNavPosition(randomPosition);
+        // Find a random position within the searchRange
+        SetNavDestination(FindRandomSearchPosition(startPosition, searchRange));
     }
 
     public override void UpdateState()
@@ -60,20 +62,32 @@ public class S_Search : BaseState
 
         if(!_handler.GetValue<bool>("B_ViewContainsThreat") && _handler.GetValue<bool>("B_DestinationReach"))
         {
-            // Find a random position within the searchRange and sample it from the nav mesh.
-            Vector3 randomPosition = startPosition + Random.insideUnitSphere * searchRange;
-            SetNavPosition(randomPosition);
+            // Find a random position within the searchRange
+            SetNavDestination(FindRandomSearchPosition(startPosition, searchRange));
         }
     }
 
     public override void Exit()
     {
         base.Exit();
-        SetNavPosition(startPosition);
+        SetNavDestination(startPosition);
     }
 
-    void SetNavPosition(Vector3 desiredPosition)
+    #endregion
+
+    #region Custom Methods
+
+    // Find a random position within the searchRange
+    Vector3 FindRandomSearchPosition(Vector3 origin, float range)
+    {
+        return origin + Random.insideUnitSphere * range;
+    }
+
+    // Sets a new destination for the character to reach
+    void SetNavDestination(Vector3 desiredPosition)
     {
         _handler.SetValue("V_Destination", desiredPosition);
     }
+
+    #endregion
 }

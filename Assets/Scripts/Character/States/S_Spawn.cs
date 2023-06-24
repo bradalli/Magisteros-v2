@@ -1,8 +1,4 @@
-using Brad.Character;
 using Brad.FSM;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class S_Spawn : BaseState
 {
@@ -15,30 +11,25 @@ public class S_Spawn : BaseState
     #endregion
 
     #region State methods
-    /*
-    public S_Spawn(StateMachine stateMachine) : base("Spawn", stateMachine)
-    {
-        fsMachine = stateMachine;
-        fsMachine.TryGetComponent(out _dmg);
-    }*/
     public override void Enter()
     {
+        // Cache components
         fsMachine = stateMachine;
         fsMachine.TryGetComponent(out _handler);
-
-        base.Enter();
-        _handler.TriggerEvent("Disable_C");
         fsMachine.TryGetComponent(out _dmg);
+
+        // Trigger events
+        _handler.TriggerEvent("Disable_C");
         if (_dmg.Health <= 0) 
             _handler.TriggerEvent("Respawn");
+
+        base.Enter();
     }
 
     public override void UpdateState()
     {
-        // Refresh value in case it has changed
-        //_handler.TriggerEvent("Get_B_InRangeOfPlayer");
-        
-        // Retrieve value from handler and only advance if npc is within range of player
+        // Only advance if npc is within range of player
+        // -> Idle
         if (_handler.GetValue<bool>("B_InRangeOfPlayer"))
         {
             _handler.TriggerEvent("Enable_C");
